@@ -1,6 +1,6 @@
 <?php
 
-class Profile extends UActiveRecord
+class Profile extends CActiveRecord
 {
 	/**
 	 * The followings are the available columns in table 'profiles':
@@ -12,6 +12,9 @@ class Profile extends UActiveRecord
 	private $_model;
 	private $_modelReg;
 	private $_rules = array();
+	
+	public $_hours = null;
+	public $_minutes = null;
 
 	// первичная модель
 	private $_modelSave;
@@ -19,7 +22,7 @@ class Profile extends UActiveRecord
 	//public static $table_prefix;
 	
 	public function tableName() {
-		return Company::getId().'_'.Yii::app()->getModule('user')->tableProfiles;
+		return Company::getId().'_'.'Profiles'; //Yii::app()->getModule('user')->tableProfiles;
 	}
 	
 	/**
@@ -49,6 +52,8 @@ class Profile extends UActiveRecord
 			$float = array();
 			$decimal = array();
 			$rules = array();
+			
+			array_push($numerical,'mailing_for_executors');
 
 			$model=$this->getFields();
 
@@ -102,6 +107,7 @@ class Profile extends UActiveRecord
 			array_push($rules,array(implode(',',$numerical), 'numerical', 'integerOnly'=>true));
 			array_push($rules,array(implode(',',$float), 'type', 'type'=>'float'));
 			array_push($rules,array(implode(',',$decimal), 'match', 'pattern' => '/^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/'));
+			array_push($rules,array('hours, minutes', 'safe'));
 			$this->_rules = $rules;
 		}
 		return $this->_rules;
@@ -116,7 +122,7 @@ class Profile extends UActiveRecord
 		// class name for the relations automatically generated below.
 		$relations = array(
 			'user'=>array(self::HAS_ONE, 'User', 'id'),
-			'categories'=>array(self::HAS_MANY, 'Categories', array('id'=>'discipline')),
+			//'categories'=>array(self::HAS_MANY, 'Categories', array('id'=>'discipline')),
 			'AuthAssignment' => array(self::HAS_ONE, 'AuthAssignment', 'userid'),
 		);
 		if (isset(Yii::app()->getModule('user')->profileRelations))
@@ -132,6 +138,9 @@ class Profile extends UActiveRecord
 		$labels = array(
 			'user_id' => UserModule::t('User ID'),
 			'rating' => UserModule::t('Rating'),
+			'mailing_for_executors' => UserModule::t('Recive new projects notifications'),
+			'notification' => UserModule::t('Receive notification of the occurrence of terms'),
+			'notification_time' => UserModule::t('Time notification'),
 		);
 		$model=$this->getFields();
 
@@ -205,6 +214,8 @@ class Profile extends UActiveRecord
 				} elseif (User::model()->isAuthor()) {
 					$criteria->addInCondition('visible',array(2,3));
 					$this->_model=ProfileField::model()->findAll($criteria);
+				} elseif (User::model()->isManager()) {
+					$this->_model=ProfileField::model()->findAll();
 				} else {
 					$this->_model=ProfileField::model()->forAll()->findAll();
 				}
@@ -215,6 +226,7 @@ class Profile extends UActiveRecord
 	
 	protected function beforeValidate() {
 		$model = $this->getFields();
+
 		foreach ($model as $field) {
 			if ($field->field_type=="LIST"){
 				$fname = $field->varname;
@@ -223,6 +235,18 @@ class Profile extends UActiveRecord
 				}
 			}
 		}
+		
+		if ($this->notification == '1') {
+			/*$validator = new CRequiredValidator;
+			$validator->attributes = array('notification_time');
+			$this->validatorList->add($validator);*/
+			
+			//if (!empty($this->hours) && !empty($this->minutes)) $this->notification_time = $this->hours . ':' . $this->minutes;
+			//else $this->notification_time = '';
+			
+			$this->notification_time = $this->hours . ':' . $this->minutes;
+		}
+		else $this->notification_time = '';
 		return parent::beforeValidate();
 	}
 	public function beforeSave(){
@@ -236,12 +260,12 @@ class Profile extends UActiveRecord
 					}
 				}
 			}
-			if (isset($this->discipline) && is_array($this->discipline)) {
+			/*if (isset($this->discipline) && is_array($this->discipline)) {
 			   $this->discipline = implode(",", $this->discipline);
 			}
 			if (isset($this->job_type) && is_array($this->job_type)) {
 			   $this->job_type = implode(",", $this->job_type);
-			}
+			}*/
 			// запрашиваем модерацию перед сохранением данных профиля
 //			if((!$this->isNewRecord) && (!Yii::app()->user->checkAccess('Manager'))) {
 //				$this->getChanges();
@@ -284,12 +308,39 @@ class Profile extends UActiveRecord
 		return $res;
 	}
     
-    public function behaviors()
+    /*public function behaviors()
     {
         return [
             'ModerateBehavior' => [
                 'class' => 'ModerateBehavior'
             ]
         ];
-    }
+    }*/
+	
+	public function getTime($type) {
+		$time = array('0' => '0');
+		if ($type == 'hours') for ($i = 1; $i <= 23; $i++) $time[$i] = $i;
+		else if ($type == 'minutes') for ($i = 1; $i <= 59; $i++) $time[$i] = $i;
+		return $time;
+	}
+	
+	public function getHours()
+	{
+		if ($this->_hours === null) $this->_hours = explode(':', $this->notification_time)[0];
+		return $this->_hours;
+	}
+	public function setHours($value)
+	{
+		$this->_hours = $value;
+	}
+	
+	public function getMinutes()
+	{
+		if ($this->_minutes === null) $this->_minutes = explode(':', $this->notification_time)[1];
+		return $this->_minutes;
+	}
+	public function setMinutes($value)
+	{
+		$this->_minutes = $value;
+	}
 }

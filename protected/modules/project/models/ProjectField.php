@@ -190,4 +190,13 @@ class ProjectField extends CActiveRecord
 			),
         ));
     }
+	
+	public function inTableByVarname($varname){
+		if (self::model()->findByAttributes(array('varname' => $varname)) != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

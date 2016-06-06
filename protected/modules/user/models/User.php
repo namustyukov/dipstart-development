@@ -5,6 +5,7 @@ class User extends CActiveRecord
 	const STATUS_NOACTIVE=0;
 	const STATUS_ACTIVE=1;
 	const STATUS_BANNED=-1;
+	public $PRIORITY_ROLES = ['Admin', 'Manager', 'Customer', 'Author'];
 
 	/**
 	 * The followings are the available columns in table 'users':
@@ -40,7 +41,7 @@ class User extends CActiveRecord
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return Campaign::getId().'_Users';
+		return Company::getId().'_Users';
 		//return Yii::app()->getModule('user')->tableUsers;
 	}
 
@@ -63,11 +64,11 @@ class User extends CActiveRecord
 			array('status', 'in', 'range'=>array(self::STATUS_NOACTIVE,self::STATUS_ACTIVE,self::STATUS_BANNED)),
 			array('create_at', 'default', 'value' => date('Y-m-d H:i:s'), 'setOnEmpty' => true, 'on' => 'insert'),
 			array('lastvisit_at', 'default', 'value' => '0000-00-00 00:00:00', 'setOnEmpty' => true, 'on' => 'insert'),
-			array('username, email, superuser, status', 'required'),
+			array('email, superuser, status', 'required'),
 			array('superuser', 'in', 'range'=>array(0,1)),
 			array('superuser, status', 'numerical', 'integerOnly'=>true),
 			array('phone_number', 'match', 'pattern' => '/^[-+()0-9 ]+$/u','message' => UserModule::t("Incorrect symbols (0-9,+,-,(,)).")),
-			array('id, username, password, email, activkey, create_at, lastvisit_at, superuser, status, phone_number', 'safe', 'on'=>'search'),
+			array('id, username, password, email, activkey, create_at, lastvisit_at, superuser, status, phone_number, roles', 'safe', 'on'=>'search'),
 		):((Yii::app()->user->id==$this->id)?array(
 			array('email', 'required','except'=>'social_network'),
 			array('phone_number', 'match', 'pattern' => '/^[-+()0-9 ]+$/u','message' => UserModule::t("Incorrect symbols (0-9,+,-,(,)).")),
@@ -78,7 +79,7 @@ class User extends CActiveRecord
 			//array('username', 'unique', 'message' => UserModule::t("This user's name already exists."),'except'=>'social_network'),
 			//array('username', 'length', 'max'=>20, 'min' => 3,'message' => UserModule::t("Incorrect username (length between 3 and 20 characters).")),
 			//array('username', 'match', 'pattern' => '/^[-A-Za-z0-9_]+$/u','message' => UserModule::t("Incorrect symbols (A-z0-9)."),'except'=>'social_network'),
-			array('id, identity, network, email, full_name, state, pid, phone_number', 'safe', 'on'=>'search')
+			array('id, identity, network, email, full_name, state, pid, phone_number, roles', 'safe', 'on'=>'search')
 		):array()));
 	}
 
@@ -89,7 +90,10 @@ class User extends CActiveRecord
 	{
         $relations['profile'] = array(self::HAS_ONE, 'Profile', 'user_id');
         $relations['zakaz'] = array(self::HAS_MANY, 'Zakaz', 'user_id');
+        $relations['zakaz_executor'] = array(self::HAS_MANY, 'Zakaz', 'executor');
+        //$relations['zakaz_stage'] = array(self::HAS_MANY, 'ZakazParts', 'author_id');
         $relations['AuthAssignment'] = array(self::HAS_ONE, 'AuthAssignment', 'userid');
+		$relations['roles'] = array(self::HAS_MANY, 'AuthAssignment', 'userid');
 		return $relations;
 	}
 
@@ -113,7 +117,8 @@ class User extends CActiveRecord
 			'superuser' => UserModule::t("Superuser"),
 			'status' => UserModule::t("Status"),
 			//'phone_number' => UserModule::t("Phone number"),
-			'phone_number' => UserModule::t('Cell number')
+			'phone_number' => UserModule::t('Cell number'),
+			'roles' => UserModule::t('Roles'),
 		);
 	}
 
@@ -157,6 +162,14 @@ class User extends CActiveRecord
 				'0' => UserModule::t('No'),
 				'1' => UserModule::t('Yes'),
 			),
+			'roles' => array(
+				'Admin' => UserModule::t('Admin'),
+				'Manager' => UserModule::t('Manager'),
+				'Customer' => UserModule::t('Customer'),
+				'Author' =>  UserModule::t('Executor'),
+				'Corrector' =>  UserModule::t('Corrector'),
+				'Webmaster'=>  UserModule::t('Webmaster'),
+			),
 		);
 		if (isset($code))
 			return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
@@ -190,6 +203,8 @@ class User extends CActiveRecord
 		$criteria->compare('lastvisit_at',$this->lastvisit_at);
 		$criteria->compare('superuser',$this->superuser);
 		$criteria->compare('status',$this->status);
+		$criteria->with = 'AuthAssignment';
+		$criteria->compare('AuthAssignment.itemname',$this->roles,true);
 
 		return new CActiveDataProvider(get_class($this), array(
 			'criteria'=>$criteria,
@@ -209,7 +224,20 @@ class User extends CActiveRecord
 			$roles = $authorizer->getAuthItems(2, Yii::app()->user->id);
 		}
 		$role =  array_keys($roles);
-		return  $role[0];
+		foreach ($role as $item)
+			if (in_array($item, $this->PRIORITY_ROLES)) $priority = $item;
+		return  $priority ? $priority : $role[0];
+	}
+	public function getUserRoleArr($userId = false) {
+		$authorizer = Rights::module()->getAuthorizer();
+		if($userId) {
+			$roles = $authorizer->getAuthItems(2, $userId);
+		}
+		else {
+			$roles = $authorizer->getAuthItems(2, Yii::app()->user->id);
+		}
+		$role = array_keys($roles);
+		return $role;
 	}
 	public function isAdmin(){
 		 if (Yii::app()->user->id && $this->getUserRole()=='Admin')
@@ -229,6 +257,11 @@ class User extends CActiveRecord
 
 	public function isAuthor(){
 		if (Yii::app()->user->id && $this->getUserRole()=='Author') return true;
+		else    return FALSE;
+	}
+	public function isCorrector(){
+		$roles = $this->getUserRoleArr();
+		if (Yii::app()->user->id && in_array('Author', $roles) && in_array('Corrector', $roles)) return true;
 		else    return FALSE;
 	}
 	public function isExecutor($project_id){
@@ -265,12 +298,28 @@ class User extends CActiveRecord
 	}
 
 	public function findAllAuthors(){
-		$sql = ('SELECT DISTINCT `id`, `email` FROM '.$this->tableName().' WHERE `id` IN (SELECT `userid` FROM '.Campaign::getId().'_AuthAssignment WHERE `itemname` = "Author")');
+		$sql = ('SELECT DISTINCT `id`, `email` FROM '.$this->tableName().' WHERE `id` IN (SELECT `userid` FROM '.Company::getId().'_AuthAssignment WHERE `itemname` = "Author")');
 	   return $this->findAllBySql($sql);
 	}
 	public function findAllCustomers(){
-		$sql = ('SELECT DISTINCT `id`, `email` FROM '.$this->tableName().' WHERE `id` IN (SELECT `userid` FROM '.Campaign::getId().'_AuthAssignment WHERE `itemname` = "Customer")');
+		$sql = ('SELECT DISTINCT `id`, `email` FROM '.$this->tableName().' WHERE `id` IN (SELECT `userid` FROM '.Company::getId().'_AuthAssignment WHERE `itemname` = "Customer")');
 	   return $this->findAllBySql($sql);
 	}
 	
+	public function findAllNotificationExecutors() {
+		return User::model()->with(
+			array(
+				'AuthAssignment'=>array('select'=>false, 'joinType'=>'INNER JOIN', 'condition'=>'AuthAssignment.itemname="Author"'),
+				'profile'=>array('select'=>'profile.notification_time', 'joinType'=>'INNER JOIN', 'condition'=>'profile.notification="1"')
+			)
+		)->findAll();
+	}
+
+	public function printRoles(){
+		$roles = $this->roles;
+		$answer = '';
+		foreach($roles as $role)
+			$answer .= self::itemAlias('roles',$role->itemname).' ';
+		return $answer;
+	}
 }

@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>Yii::t('site','List Templates'), 'url'=>array('index')),
+	//array('label'=>Yii::t('site','List Templates'), 'url'=>array('index')),
 	array('label'=>Yii::t('site','Create Templates'), 'url'=>array('create')),
 	array('label'=>Yii::t('site','Update Templates'), 'url'=>array('update', 'id'=>$model->id)),
 	array('label'=>Yii::t('site','Delete Templates'), 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>Yii::t('site','Are you sure you want to delete this item?'))),

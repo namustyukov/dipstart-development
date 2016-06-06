@@ -15,10 +15,10 @@
 
         foreach ($templates as $template) {
             $name = $template['name'];
+			$template->text = $template->insertVariables($template->text,$orderId);
             if (in_array($name, $templateNames)) {
                 continue;
             }
-
             $templateNames[] = $name;
         }
 

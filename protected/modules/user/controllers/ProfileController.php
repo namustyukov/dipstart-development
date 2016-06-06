@@ -42,6 +42,9 @@ class ProfileController extends Controller
 		{
 			$model->attributes=$_POST['User'];
 			$profile->attributes=$_POST['Profile'];
+
+			$profile->notification = $_POST['Profile']['notification'];
+			
 			if($model->validate()&&$profile->validate()) {
                 //Yii::app()->user->updateSession();
 				$model->save();

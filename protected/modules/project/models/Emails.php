@@ -28,29 +28,28 @@ class Emails extends CActiveRecord {
 	const TYPE_23=23; // +Исполнителю о новой доработке
 	const TYPE_24=24; // +Исполнителю об оплате заказа
 	//const TYPE_25=25; // Заказчику о поступлении оплаты
+	const TYPE_26=26; // +Техническому руководителю сообщение рассылки
 	
 	public static $names_of_email = array(
-	TYPE_10 =>'Восстановление пароля',
-	TYPE_11 =>'Заказчику после регистрации',
-	TYPE_12 =>'Заказчику проект принят',
-	TYPE_13 =>'Заказчику об оплате когда выставлен счет',
-	TYPE_14 =>'Заказчику когда готова часть',
-	TYPE_15 =>'Заказчику когда готова вся работа',
-	TYPE_16 =>'Заказчику о сообщении в чате',
-	TYPE_17 =>'Заказчику о завершении заказа',
-	TYPE_18 =>'Исполнителю сообщение рассылки',
-	TYPE_19 =>'Исполнителю о назначении',
-	TYPE_20 =>'Исполнителю о сообщении в чате',
-	TYPE_21 =>'Исполнителю о съеме с заказа',
-	TYPE_22 =>'Исполнителю о том что срок сдачи части наступил',
-	TYPE_23 =>'Исполнителю о новой доработке',
-	TYPE_24 =>'Исполнителю об оплате заказа',
-	//TYPE_25 =>'Заказчику о поступлении оплаты',
+		self::TYPE_10 =>'Восстановление пароля',
+		self::TYPE_11 =>'Заказчику после регистрации',
+		self::TYPE_12 =>'Заказчику проект принят',
+		self::TYPE_13 =>'Заказчику об оплате когда выставлен счет',
+		self::TYPE_14 =>'Заказчику когда готова часть',
+		self::TYPE_15 =>'Заказчику когда готова вся работа',
+		self::TYPE_16 =>'Заказчику о сообщении в чате',
+		self::TYPE_17 =>'Заказчику о завершении заказа',
+		self::TYPE_18 =>'Исполнителю сообщение рассылки',
+		self::TYPE_19 =>'Исполнителю о назначении',
+		self::TYPE_20 =>'Исполнителю о сообщении в чате',
+		self::TYPE_21 =>'Исполнителю о съеме с заказа',
+		self::TYPE_22 =>'Исполнителю о том что срок сдачи части наступил',
+		self::TYPE_23 =>'Исполнителю о новой доработке',
+		self::TYPE_24 =>'Исполнителю об оплате заказа',
+		//self::TYPE_25 =>'Заказчику о поступлении оплаты',
+		self::TYPE_26 =>'Техническому руководителю сообщение рассылки',
 	);
 
-	
-	public static $table_prefix;
-	
 	// эти переменные будут использоваться для подстановок в
 	// телах писем с системными сообщениями.
 	public 	$site;
@@ -79,10 +78,7 @@ class Emails extends CActiveRecord {
 	public 	$to_id;
 	
 	public function tableName() {
-		if(isset(self::$table_prefix))
-			return self::$table_prefix.'Emails';
-		else
-			return 'Emails';
+		return Company::getId().'_Emails';
 	}
     
     public function rules() {
@@ -113,10 +109,12 @@ class Emails extends CActiveRecord {
 	}
     public function init(){
         parent::init();
-		$this->site				= 'http://'.$_SERVER['SERVER_NAME'].'/';
+		if (array_key_exists('SERVER_NAME', $_SERVER ) ) {
+			$this->site				= 'http://'.$_SERVER['SERVER_NAME'].'/';
+		}
 		$this->page_psw			= '';
 		$this->support			= Company::getSupportEmail();
-		$this->campaign			= '';
+		$this->campaign			= Company::getName();
 		$this->company			= Company::getName();
 		$this->name				= '';
 		$this->login			= '';
@@ -127,7 +125,7 @@ class Emails extends CActiveRecord {
 		$this->num_order		= '';
 		$this->subject_order	= '';
 		$this->price_order		= '';
-		$this->price_order_part =  '';
+		$this->price_order_part = '';
 		$this->sum_order		= '';
 		$this->message			= '';
 		$this->page_payment		= '';
@@ -271,10 +269,12 @@ class Emails extends CActiveRecord {
 			"Content-Type: text/plain; charset=UTF-8\r\n".
 			"From: $from\r\n";
 			
-//echo 'mail $to:'.$to;
-//echo '<br>$headers='.$headers;
+//echo "\n".'mail to:'.$to;
+//echo "\n".'subject:'.$subject;
+//echo "\n".'headers: '.$headers;
+//echo "\n".'body: '.$body;
 		$result = mail( $to, $subject,$body,$headers);
-//echo '<br>$result='.$result;
+//echo "\n".'result='.$result;
 		$this->from		= $this->from_id;;
 		$this->to		= $this->to_id;
 		$this->body		= $body;		

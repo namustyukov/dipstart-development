@@ -38,18 +38,19 @@ class UloginUserIdentity implements IUserIdentity
             $user->email = $uloginModel->email;
             $user->full_name = $uloginModel->full_name;
 			$user->status = 1;
-			
             $user->save();
 			
 			$current_role = User::model()->getUserRole($user->id);
-			/*echo 'role: ';
-			print_r($current_role);
-			//Yii::app()->end();*/
 			if(!$current_role) {
+				if($role != 'Author' && $role != 'Webmaster') $role = 'Customer';
 				$AuthAssignment = new AuthAssignment;
 				$AuthAssignment->attributes=array('itemname'=>$role,'userid'=>$user->id);
 				$AuthAssignment->save();
 			}
+			/*
+			echo 'role: ';
+			print_r($current_role);
+			Yii::app()->end();*/
 		}
 		
 		$this->id = $user->id;

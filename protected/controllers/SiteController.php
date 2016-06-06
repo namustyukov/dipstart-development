@@ -68,6 +68,12 @@ class SiteController extends Controller {
 		}
 	}
 
+	public function actionAgreement()
+	{
+		$agreement = Company::getAgreement();
+		$this->render('agreement',array('agreement'=>$agreement));
+	}
+	
 	/**
 	 * Displays the contact page
 	 */

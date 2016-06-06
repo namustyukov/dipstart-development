@@ -5,6 +5,18 @@
 }
 
 /* Akoch-ov */
+.bg-green {
+	background-color: #a0e486;
+}
+.bg-red {
+	background-color: #da8383;
+}
+.bg-blue, .chtpl0-msg .chtpl0-buttons button.chtpl0-answer, .btn-primary, #new-changes-link a {
+	background-color: #85b3da;
+}
+.btn-primary {
+	border: 0;
+}
 #user-form {
 	text-align: center;
 }
@@ -15,18 +27,50 @@
 	display: none;
 }
 .btn-spam {
-	float: right;
-	margin-top: -2px;
+	/*float: right;
+	margin-top: -2px;*/
+	margin-left: 5px;
+	height: 40px;
+	padding: 0;
+	color: white;
+	border: 0;
+}
+.before-panel-group+.left {
+	text-align: left;
+}
+.before-panel-group+.right {
+	text-align: right;
+}
+.before-panel-group {
+	position: relative;
+	margin-top: 10px;
+	margin-bottom: -50px;
+}
+.before-panel-group button {
+	position: relative;
+	z-index: 1;
+}
+.before-panel-group button.z-index-2 {
+	z-index: 2;
 }
 .btn-change-status {
-	background: #81B2DC;
-	margin-top: -4px;
-	margin-left: 10px;
+	/*background: #81B2DC;*/
+	margin-right: 10px;
+	height: 40px;
+	padding: 0;
 	color: white;
+	border: 0;
 }
-#refound_order {
+.btn-icon-40 img{
+	height: 40px;
+	padding: 0;
+	margin: 0;
+	display: block;
+	float: left;
+}
+/*#refound_order {
 	background: #DCB281;
-}
+}*/
 /*.aboutZakaz #justFileUpload {
 	height: 100px;
 }*/
@@ -41,7 +85,7 @@ div.terms-column-2 {
 }
 
 div.terms-column-1, div.terms-column-2, div.terms-column-3 {
-    margin-top: 20px;
+    margin-top: 5px;
 } 
 
 .chtpl0-msg .chtpl0-buttons button {

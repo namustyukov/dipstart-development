@@ -21,13 +21,8 @@ class ZakazParts extends CActiveRecord
     public $dateTimeIncomeFormat = 'yyyy-MM-dd HH:mm:ss';
     public $dateTimeOutcomeFormat = 'dd.MM.yyyy HH:mm';
 	
-	public static $table_prefix;
-	
 	public function tableName() {
-		if(isset(self::$table_prefix))
-			return self::$table_prefix.'ProjectsParts';
-		else
-			return 'ProjectsParts';
+		return Company::getId().'_ProjectsParts';
 	}
 
     public function getDbdate()
@@ -133,5 +128,18 @@ class ZakazParts extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function getDateLastUncompleted($id){
+		$part = self::model()->findAllByAttributes(array('proj_id' => $id), array('order' => 'date asc', 'limit' => '1'));
+		return $part[0]->date;
+	}
+
+	public function getForFilter(){
+		return CHtml::listData(
+			self::model()->with('status')->findAll(array(
+				'select' => array('id', 'status_id'), 'condition' => 'status_id != :id', 'params' => array(':id' => PartStatus::COMPLETED)
+			)), 'status_id', 'status.status'
+		);
 	}
 }

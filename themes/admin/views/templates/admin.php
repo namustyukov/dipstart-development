@@ -2,13 +2,8 @@
 /* @var $this TemplatesController */
 /* @var $model Templates */
 
-$this->breadcrumbs=array(
-	Yii::t('site','Templates')=>array('index'),
-	Yii::t('site','Manage'),
-);
-
 $this->menu=array(
-	array('label'=>Yii::t('site','List Templates'), 'url'=>array('index')),
+	//array('label'=>Yii::t('site','List Templates'), 'url'=>array('index')),
 	array('label'=>Yii::t('site','Create Templates'), 'url'=>array('create')),
 );
 

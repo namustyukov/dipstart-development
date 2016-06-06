@@ -18,11 +18,9 @@ if(!$isGuest) Yii::app()->clientScript->registerScriptFile('/js/chat.js');
 	<?php
 	if (!$order->executor) {
 		if($isGuest){
-			$href = 'http://'.$_SERVER['SERVER_NAME'].'/user/login?role=Author';
+			$href = 'http://'.$_SERVER['SERVER_NAME'].'/user/registration?role=Author';
 			$attr = array('onclick'=>"document.location.href = '$href'", 'class'=>"btn btn-primary btn-block btn-green btn-30");
 			echo  '<div class="col-xs-12 get-it">'.CHtml::htmlButton(UserModule::t('Get It!'), $attr).'</div>';
-			$company = Campaign::getCompany();
-			if ($company->text4guests) echo '<div class="col-xs-12 text4guests">'.$company->text4guests.'</div>';
 		}else{
 			?>
 			<div class="col-xs-8 take-block" data-message="<?="<div class='post'>".$messageForAuthor.'</div>';?>"><?php
@@ -52,6 +50,7 @@ if(!$isGuest) Yii::app()->clientScript->registerScriptFile('/js/chat.js');
 				?>
 			</div>
 			<div class="col-xs-6"><?php
+				//if(Yii::app()->user->id) 
 				$this->widget('application.modules.project.widgets.changes.ChangesWidget', array(
 					'project' => $order,
 				));
@@ -61,17 +60,25 @@ if(!$isGuest) Yii::app()->clientScript->registerScriptFile('/js/chat.js');
 			$this->renderPartial('/zakaz/_orderInModerate', array('model' => $order));
 		}
 
-		if(!$isGuest){
+		if(!$isGuest)
+		{
 			?>
 			<div id="chat" class="col-xs-8 user-chat-block">
 				<?php $this->renderPartial('chat',array('order'=>$order, 'orderId'=>$orderId));?>
 			</div>
 			<div class="col-xs-8 chat-accessories-block">
 				<?php
-				$this->renderPartial('_accessories',array('order'=>$order, 'orderId'=>$orderId));
+				$this->renderPartial('_accessories',array('order'=>$order, 'orderId'=>$orderId, 'buttonTemplates'=>$buttonTemplates, 'role'=>'Author'));
 				?>
 			</div><?
 		}
+		else
+		{
+			echo '<div class="chat-accessories-block-guest clear">';
+			$this->renderPartial('_accessoriesGuest',array('order'=>$order, 'orderId'=>$orderId, 'buttonTemplates'=>$buttonTemplates));
+			echo '</div>';
+		}
+
 	} else {
 		?>
 		<div class="col-xs-8 text-block">
@@ -85,7 +92,10 @@ if(!$isGuest) Yii::app()->clientScript->registerScriptFile('/js/chat.js');
 		</div>
 		<?php
 	}
-	if($isGuest) { ?>
+	if($isGuest) {
+		$company = Company::getCompany();
+		if ($company->text4guests) echo '<div class="col-xs-12 text4guests">'.$company->text4guests.'</div>';
+	?>
 	<div class="heading guest-links clear">
 		<a href="/project/zakaz/list">&lt;- <?=ProjectModule::t('Back to the orders list') ?></a>
 		<a class="right" href="/user/login?role=Author"><?=UserModule::t('Login') ?></a>

@@ -2,6 +2,17 @@
 <?php $this->pageTitle=Yii::app()->name . ' - '.UserModule::t("Profile");
 
 ?><!--<div class="row"><div class="col-md-offset-3 col-md-4"><h3><?php //echo UserModule::t('Edit profile'); ?></h3></div></div>-->
+<script type="text/javascript">
+$(document).ready(function () {
+	$("#Profile_notification").on("click", function(){
+		if ($(this).is(":checked")) $('#notificationParams').show();
+		else $('#notificationParams').hide();
+	});
+	
+	if ($("#Profile_notification").is(":checked")) $('#notificationParams').show();
+	else $('#notificationParams').hide();
+});
+</script>
 
 <div class="row">
     <div class="col-md-7">
@@ -43,6 +54,30 @@ $form=$this->beginWidget('UActiveForm', array(
                 <?php echo $form->textField($profile,'rating',array('size'=>20,'maxlength'=>20,'class'=>'form-control', 'disabled'=>'true')); ?>
             </div>
         </div>
+        <div class="form-group">
+            <?php echo $form->labelEx($profile,'mailing_for_executors',array('class'=>'col-md-4 control-label')); ?>
+            <div class="col-md-8">
+                <?php if($profile->mailing_for_executors) $attr = array('checked'=>'checked'); else $attr = array();
+				echo $form->checkBox($profile,'mailing_for_executors', $attr ); ?>
+            </div>
+            <?php echo $form->error($profile,'mailing_for_executors'); ?>
+        </div>
+		<div class="form-group">
+            <?php echo $form->labelEx($profile,'notification',array('class'=>'col-md-4 control-label')); ?>
+            <div class="col-md-8">
+                <?php echo $form->checkBox($profile,'notification'); ?>
+            </div>
+            <?php echo $form->error($profile,'notification'); ?>
+        </div>
+		<div class="form-group" id="notificationParams">
+            <?php echo $form->labelEx($profile,'notification_time',array('class'=>'col-md-4 control-label')); ?>
+            <div class="col-md-8">
+				<?php echo 'Часов '.$form->dropDownList($profile,'hours',$profile->getTime('hours')); ?>
+				&nbsp;
+				<?php echo 'Минут '.$form->dropDownList($profile,'minutes',$profile->getTime('minutes')); ?>
+            </div>
+            <?php echo $form->error($profile,'notification_time'); ?>
+        </div>
 		<?php } ?>
 		
         <div class="form-group">
@@ -79,7 +114,7 @@ $form=$this->beginWidget('UActiveForm', array(
                         echo '<div class="col-md-8">'.$widgetEdit.'</div>';
                     } elseif ($field->range) {
                         echo '<div class="col-md-8">'.$form->dropDownList($profile,$field->varname,Profile::range($field->range),array('class'=>'form-control')).'</div>';*/
-					} elseif ($field->field_type=="TEXT") {
+						} elseif ($field->field_type=="TEXT") {
 //                        echo '<div class="col-md-8"><textarea name="Profile['.$field->varname.']" rows="6" cols="50" class="form-control">'.$attributes[$field->varname].'</textarea></div>';
                         echo '<div class="col-md-8">'.$form->textArea($profile,$field->varname,array('rows'=>6, 'cols'=>50,'class'=>'form-control')).'</div>';
                     } else {

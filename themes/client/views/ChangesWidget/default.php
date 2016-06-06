@@ -28,7 +28,7 @@
                     ));?>
                     </div>
                     <?php
-                    if ($user->isCustomer()) { ?>
+                    if ($user->isCustomer() || $isCorrector) { ?>
                         <div class="form" id="new-changes-block">
 							<div id="new-changes-link"><a data-toggle="collapse" data-parent="#new-changes-block" href="#new-changes-collapse"><?=ProjectModule::t('The new revision')?></a></div>
 							<div id="new-changes-collapse" class="collapse">

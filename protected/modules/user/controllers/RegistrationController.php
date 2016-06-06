@@ -6,7 +6,7 @@ class RegistrationController extends Controller
 
     protected function performAjaxValidation($model) {
         if(isset($_POST['ajax']) && $_POST['ajax']==='simple-registration-form') {
-            echo CActiveForm::validate($model);
+			echo CActiveForm::validate($model);
             Yii::app()->end();
         }
     } 
@@ -29,6 +29,15 @@ class RegistrationController extends Controller
 				$AuthAssignment->attributes=array('itemname'=>$role,'userid'=>$model->id);
 				$AuthAssignment->save();
 				
+				if ($role == 'Author') {
+					if($model->profile == null) {
+						$profile = new Profile;
+						$profile->user_id = $model->id;
+						$profile->mailing_for_executors = 1;
+						$profile->save();
+					}
+				}
+				
 				$webmasterlog = new WebmasterLog();
 				$webmasterlog->pid = $model->pid;
 				$webmasterlog->uid = $model->id;
@@ -50,8 +59,8 @@ class RegistrationController extends Controller
 				$email->to_id   = $user->id;
 				
 				$rec   = Templates::model()->findAll("`type_id`='$type_id'");
-				$id = Campaign::getId();
-				$email->campaign = Campaign::getName();
+				$id = Company::getId();
+				$email->company = Company::getName();
 				$email->name = $model->full_name;
 				$email->login= $model->email;
 				$email->password= $soucePassword;
@@ -90,10 +99,15 @@ class RegistrationController extends Controller
 			$role = 'Customer';
 		}
 		if (Yii::app()->user->id && (!Yii::app()->user->hasFlash('reg_success') && !Yii::app()->user->hasFlash('reg_failed'))) {
-			$this->redirect(Yii::app()->controller->module->profileUrl);
+			if($role == 'Author')
+				$this->redirect('/project/zakaz/list');
+			else
+				$this->redirect(Yii::app()->controller->module->profileUrl);
 		} else {
 			if (isset($_POST['RegistrationForm'])) {
 				if (self::register($model, $_POST['RegistrationForm'], $role)){
+					Yii::import('project.components.EventHelper');
+					if($role == 'Customer') EventHelper::newCustomer();
 					Yii::app()->user->setFlash('reg_success',UserModule::t("Thank you for your registration. Password has been sent to your e-mail. Please check your e-mail ({{email}}) before start.", ['{{email}}'=>$model->email]));
 					$this->refresh();
 				} else {

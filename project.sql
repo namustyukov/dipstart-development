@@ -285,7 +285,6 @@ INSERT INTO `1_ProjectFields` (`id`, `varname`, `title`, `field_type`, `field_si
 (2, 'description', 'Требуемый функционал', 'TEXT', '0', 2, '', '', 3, 1),
 (5, 'soderjanie', 'План', 'TEXT', '0', 2, '', '', 1, 1),
 (7, 'specials', 'Специализация проекта', 'LIST', '0', 3, 'Укажите специальность', '', 0, 1),
-(8, 'technicalspec', 'Необходимость тех. спец.', 'BOOL', '0', 2, '', '0', 5, 2),
 (9, 'opisanie', 'Описание проекта в целом', 'TEXT', '0', 2, '', '', 2, 1),
 (13, 'result_form', 'В каком виде выдавать результат работы?', 'TEXT', '0', 2, '', '', 8, 1),
 (14, 'tech', 'Технологии используемые в задаче', 'TEXT', '0', 2, '', '', 0, 1),
@@ -302,7 +301,9 @@ CREATE TABLE IF NOT EXISTS `1_ProjectMessages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message` text NOT NULL,
   `sender` int(11) NOT NULL,
+  `sender_role` INT NULL DEFAULT NULL,
   `recipient` int(11) NOT NULL,
+  `recipient_role` INT NULL DEFAULT NULL,
   `moderated` tinyint(1) NOT NULL,
   `date` datetime NOT NULL,
   `order` int(11) NOT NULL,
@@ -352,6 +353,7 @@ CREATE TABLE IF NOT EXISTS `1_Projects` (
   `title` varchar(255) NOT NULL COMMENT 'Наименование',
   `add_demands` text COMMENT 'Доп. требования',
   `status` tinyint(4) DEFAULT '0' COMMENT 'Статус проекта',
+  `last_spam` TIMESTAMP NULL,
   `executor` int(10) unsigned DEFAULT '0' COMMENT 'ID исполнителя',
   `notes` text NOT NULL COMMENT 'Заметки',
   `date` timestamp NULL DEFAULT NULL,
@@ -372,7 +374,7 @@ CREATE TABLE IF NOT EXISTS `1_Projects` (
   `time_to_connect` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Таблица для хранения проектов (заказов)' AUTO_INCREMENT=2 ;
-
+ALTER TABLE  `1_Projects` ADD  `parent_id` INT NULL DEFAULT NULL , ADD INDEX (  `parent_id` );
 --
 -- Дамп данных таблицы `1_Projects`
 --
@@ -513,8 +515,8 @@ INSERT INTO `1_Templates` (`id`, `name`, `title`, `text`, `type_id`) VALUES
 (43, 'Email: Срок сдачи подошёл', 'Сегодня срок сдачи части заказа ', 'Здравствуйте %имя%.\r\n\r\nНапоминаем Вам, что сегодня - срок сдачи части %название части% по заказу %ссылка на заказ%.\r\n\r\nЕсли Вы по каким-либо причинам не можете закончить работу или есть задержка со сроками - уведомите об этом менеджера заранее.\r\n\r\nБлагодарим  за Вашу ответственность.', 22),
 (44, 'Email: Новая доработка', 'Новая доработка', 'Здравствуйте %имя%.\r\n\r\nОбращаем Ваше внимание! \r\nЗаказчик загрузил замечания в форму заказа %ссылка на заказ%, требуется корректировка одной из частей.\r\nЗамечания Вы можете найти в форме заказа в разделе “Доработки”. \r\n\r\nТакже обратите внимание на блок “Части”, данные доработки будут добавлены как новая часть и будет установлен срок их сдачи.', 23),
 (45, 'Email: Исполнителю о зарплате', 'Оплата заказа', 'Здравствуйте %Имя%.\r\n\r\nПо заказу %ссылка на заказ% выставлено к оплате %сумма из выставлено к оплате% рублей.\r\n\r\nОжидайте поступления средств на Ваш счет.', 24),
-(46, 'Исполнителю', 'АВТОРУ максимальный бюджет', 'Максимальный бюджет этого заказа 1200 р, рассмотрите, пожалуйста, возможность выполнения. ', 2);
-
+(46, 'Исполнителю', 'АВТОРУ максимальный бюджет', 'Максимальный бюджет этого заказа 1200 р, рассмотрите, пожалуйста, возможность выполнения. ', 2),
+(47, 'Email: Рассылка тех.рук. о свободном заказе', 'Появился новый заказ для тех.рук. по Вашей специальности (%специальность%)', 'Здравствуйте %имя%\r\nОповещаем Вас о поступлении нового заказа.\r\n\r\nНаименование: %Наименование% \r\nСпециальность: %специальность%\r\nСсылка: %ссылка на заказ%\r\n\r\n\r\nПодробнее узнать о заказе, задать уточняющие вопросы, сообщить о Вашем желании стать Исполнителем этой работы Вы можете в чате, перейдя по этой ссылке %ссылка на заказ%, Предварительно авторизуйтесь в своем личном кабинете (для того что бы каждый раз не авторизовываться поставьте галочку "Запомнить" при авторизации).\r\nЕсли Вы хотите стать автором этой работы, напишите в чат желаемую цену и в течении суток Вы получите ответ о результате. Если Вы делали заявку три раза, указывая при этом адекватную сложности заказа и своему рейтингу цену и Вас не назначили на заказ, подпишите менеджеру "я Исполнитель на очереди" и Вам дадут этот заказ.\r\nПожалуйста, внимательно просмотрите всю информацию о заказе, сроках и подробности написания работы!\r\nО назначении Вас исполнителем заказа Вы будете оповещены по электронной почте\r\n', 26);
 -- --------------------------------------------------------
 
 --
@@ -891,6 +893,9 @@ CREATE TABLE IF NOT EXISTS `Companies` (
   `text4customers` text CHARACTER SET utf8,
   `WebmasterFirstOrderRate` float DEFAULT NULL,
   `WebmasterSecondOrderRate` float DEFAULT NULL,
+  `telfin_id` VARCHAR( 32 ) NULL DEFAULT NULL,
+  `telfin_secret` VARCHAR( 32 ) NULL DEFAULT NULL,
+  `module_tree` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
@@ -918,6 +923,37 @@ CREATE TABLE IF NOT EXISTS `Rights` (
 -- Дамп данных таблицы `Rights`
 --
 
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `cdr` для логов телефонии
+--
+
+CREATE TABLE IF NOT EXISTS `1_cdr` (
+  `id` char(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `published` int(11) NOT NULL,
+  `answerDuration` int(11) DEFAULT NULL,
+  `source` varchar(255) COLLATE utf8_bin NOT NULL,
+  `destination` varchar(255) COLLATE utf8_bin NOT NULL,
+  `duration` int(11) NOT NULL,
+  `flow` enum('IN','OUT','LOCAL') COLLATE utf8_bin NOT NULL,
+  `result` enum('ANSWERED','BUSY','FAILED','NO_ANSWER','UNKNOWN','NOT_ALLOWED') COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `1_TipDone` для записи состояний подсказок для менеджера
+--
+
+CREATE TABLE IF NOT EXISTS `1_TipDone` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`message_id` int(11) NOT NULL,
+`status` varchar(100) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 
 -- --------------------------------------------------------
 

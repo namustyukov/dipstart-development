@@ -2,7 +2,7 @@
 
 class PartnerController extends Controller {
 
-	public function actionRedirect($pid, $url) {
+	public function actionRedirect($pid, $url = null) {
 		setcookie('partner', $pid, time()+60*60*24*30*3, '/');
 		$model = new WebmasterLog();
 		$model->pid = $pid;
@@ -15,7 +15,7 @@ class PartnerController extends Controller {
 		if($url) {
 			$this->redirect($url);
 		} else {
-			$fp = Campaign::getFrontPage();
+			$fp = Company::getFrontPage();
 			if ($fp) $this->redirect($fp);
 			else $this->redirect($this->createUrl('project/zakaz/create'));
 		}

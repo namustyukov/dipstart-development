@@ -9,6 +9,7 @@ $items = array();
 $role = User::model()->getUserRole();
 switch ($role){
 	case 'root':
+		$items[] = array('label'=>Yii::t('site','SQL'), 'url'=>array('/company/sql'));
 		$items[] = array('label'=>Yii::t('site','List companies'), 'url'=>array('/company/list'));
 		$items[] = array('label'=>Yii::t('site','Create company'), 'url'=>array('/company/create'));
 		$items[] = array('label'=>Yii::t('site','Edit company'), 'url'=>array('/company/edit'));
@@ -16,36 +17,32 @@ switch ($role){
 		$items[] = array('label'=>Yii::t('site','Logout'). ' ('.Yii::app()->user->name.')', 'url'=>array('/user/logout'));
 		break;
     case 'Admin':
-
-        //$items[] = array('label'=>Yii::t('site','Home'), 'url'=>Yii::app()->getBaseUrl(true));
-        $items[] = array('label'=>Yii::t('site','Projects'), 'url'=>array('/project/zakaz'), 'items' => array(
-            array('label'=>Yii::t('site','All orders'), 'url'=>array('/project/zakaz')),
-            array('label'=>Yii::t('site','Create order'), 'url'=>array('/project/zakaz/create')),
-			array('label'=>Yii::t('site','Project Fields'), 'url'=>array('/project/projectField/admin')),
-        ), 'itemOptions' =>   array('class' => 'dropdown-submenu'));
-        $items[] = array('label'=>Yii::t('site','Users'), 'url'=>array('/user'), 'items' => array(
-            array('label'=>Yii::t('site','Users'), 'url'=>array('/user')),
-            array('label'=>Yii::t('site','Profile Fields'), 'url'=>array('/user/profileField/admin')),
-            array('label'=>Yii::t('site','Rights'), 'url'=>array('/rights')),
-        ));
-        $items[] = array('label'=>Yii::t('site','Logs'), 'url'=>array('/logs'), 'items' => array(
-            array('label'=>Yii::t('site','Managers logs'), 'url'=>array('/logs')),
-        ));
-        $items[] = array('label'=>Yii::t('site','References'), 'url'=>array('#'), 'items' => array(
-			array('label'=>Yii::t('site','company'), 'url'=>array('/company/edit')),
-            array('label'=>Yii::t('site','Categories'), 'url'=>array('/catalog/index')),
-            array('label'=>Yii::t('site','Statuses'), 'url'=>array('/projectStatus/index')),
+		//$items[] = array('label'=>Yii::t('site','Home'), 'url'=>Yii::app()->getBaseUrl(true));
+		$items[] = array('label'=>Yii::t('site','Events'), 'url'=>array('/project/event'));
+		$items[] = array('label'=>Yii::t('site','Orders'), 'url'=>array('/project/zakaz'), 'items' => array(
+			array('label'=>Yii::t('site','All orders'), 'url'=>array('/project/zakaz')),
+			array('label'=>Yii::t('site','Create order'), 'url'=>array('/project/zakaz/create')),
+		), 'itemOptions' =>   array('class' => 'dropdown-submenu'));
+		$user = User::model()->findByPk(Yii::app()->user->id); // is it need??
+		$items[] = array('label'=>Yii::t('site','Accounts department'), 'url'=>array('/project/payment/view'), 'visible'=>$user->superuser);
+		$items[] = array('label'=>Yii::t('site','Users'), 'url'=>array('/user/admin'));
+		  $logs[] = array('label'=>Yii::t('site','Managers logs'), 'url'=>array('/logs'));
+		  if(Yii::app()->cdr->app_id) $logs[] = array('label'=>Yii::t('site','Calls'), 'url'=>array('/call/index'));
+		$items[] = array('label'=>Yii::t('site','Logs'), 'url'=>array('/logs'), 'items' => $logs);
+		$items[] = array('label'=>Yii::t('site','Company settings'), 'url'=>array('#'), 'items' => array(
+			array('label'=>Yii::t('site','Base settings'), 'url'=>array('/company/edit')),
+			array('label'=>Yii::t('site','Templates'), 'url'=>array('/templates/admin')),
+			array('label'=>Yii::t('site','Statuses'), 'url'=>array('/projectStatus/index')),
 			array('label'=>Yii::t('site','Parts statuses'), 'url'=>array('/partStatus/index')),
-            array('label'=>Yii::t('site','Templates'), 'url'=>array('/templates/index')),
-        ));
-        $items[] = array('label'=>Yii::t('site','Events'), 'url'=>array('/project/event'));
-        $user = User::model()->findByPk(Yii::app()->user->id);
-        $items[] = array('label'=>Yii::t('site','Accounts department'), 'url'=>array('/project/payment/view'), 'visible'=>$user->superuser);
-        $items[] = array('label'=>Yii::t('site','Logout'). ' ('.Yii::app()->user->name.')', 'url'=>array('/user/logout'));
-
-        break;
+			array('label'=>Yii::t('site','Project fields settings'), 'url'=>array('/project/projectField/admin')),
+			array('label'=>Yii::t('site','Profile fields settings'), 'url'=>array('/user/profileField/admin')),
+			array('label'=>Yii::t('site','Rights'), 'url'=>array('/rights')),
+			array('label'=>Yii::t('site','Fields lists'), 'url'=>array('/catalog/admin')),
+		));
+		$items[] = array('label'=>Yii::t('site','Logout'). ' ('.Yii::app()->user->name.')', 'url'=>array('/user/logout'));
+		break;
     case 'Manager':
-        $items[] = array('label'=>Yii::t('site','Users'), 'url'=>array('/user'));
+        $items[] = array('label'=>Yii::t('site','Users'), 'url'=>array('/user/admin'));
 		$items[] = array('label'=>Yii::t('site','All orders'), 'url'=>array('/project/zakaz'));
 		$items[] = array('label'=>Yii::t('site','Create order'), 'url'=>array('/project/zakaz/create'));
         $items[] = array('label'=>Yii::t('site','Events'), 'url'=>array('/project/event'));

@@ -41,6 +41,7 @@ class PaymentController extends Controller {
 			$params = Yii::app()->request->getParam('Payment');
 			$model->setAttributes($params);
 			Yii::app()->user->setState('PaymentFilterState', $params);
+			$test = '=);';
 		}
 
 		$data = $model->getTotalData();
@@ -59,6 +60,7 @@ class PaymentController extends Controller {
 		$this->render('admin',array(
 			'model'=>$model,
 			'data'=>$data,
+			'test'=>$test,
 		));
     }
 	
@@ -226,7 +228,7 @@ class PaymentController extends Controller {
 
     }*/
 
-    public function actionSavePayments() { // Changes in payment block in order managment
+    public function actionSavePayments() { // Changes in payment block in order managment      // Не лишняя ли это функция?
         $this->_prepairJson();
         $orderId = $this->_request->getParam('order_id');
         $payment = ProjectPayments::model()->find('order_id = :ORDER_ID', array(
@@ -242,10 +244,10 @@ class PaymentController extends Controller {
         
         $to_receive = $this->_request->getParam('to_receive', 0);
         
-        $payment->project_price = $this->_request->getParam('project_price');
-        $payment->to_receive   += (int) $this->_request->getParam('to_receive');
-        $payment->work_price = $this->_request->getParam('work_price');
-        $paying              = (int) $this->_request->getParam('to_pay');
+        if($this->_request->getParam('project_price')) $payment->project_price = $this->_request->getParam('project_price');
+        if($this->_request->getParam('to_receive')) $payment->to_receive   += (int) $this->_request->getParam('to_receive');
+        if(!($this->_request->getParam('work_price') === null)) $payment->work_price = $this->_request->getParam('work_price');
+        if($this->_request->getParam('to_pay')) $paying              = (int) $this->_request->getParam('to_pay');
         
         if ( ($paying > 0) && ($to_receive == 0) && ($payment->work_price > 0) && ($paying + $payment->to_pay > $payment->work_price + $payment->payed) && ((int) $payment->to_pay > 0) ) {
             echo CJson::encode(['Оплата превышает лимит']);
@@ -271,7 +273,7 @@ class PaymentController extends Controller {
                 $buh = new Payment;
                 $buh->approve = 0;
                 $buh->order_id = $orderId;
-                $buh->receive_date = date("Y-m-d");
+                $buh->receive_date = date('Y-m-d H:i:s');
                 $buh->theme = $order->title;
                 $buh->user = $user->email;
                 $buh->summ = $paying;
@@ -328,7 +330,7 @@ class PaymentController extends Controller {
 				
 				$buh = new Payment;
 				$buh->order_id = $orderId;
-				$buh->receive_date = date('Y-m-d');
+				$buh->receive_date = date('Y-m-d H:i:s');
 				$buh->theme = $order->title;
 				$user = User::model()->findByPk($order->user_id);
 				$buh->user = $user->email;
@@ -371,7 +373,7 @@ class PaymentController extends Controller {
 				$buh = new Payment;
 				$buh->approve = 0;
 				$buh->order_id = $orderId;
-				$buh->receive_date = date('Y-m-d');
+				$buh->receive_date = date('Y-m-d H:i:s');
 				$buh->theme = $order->title;
 				$user = User::model()->findByPk($order->user_id);
 				$buh->user = $user->email;

@@ -1,7 +1,15 @@
-<div class="form-group col-md-offset-3 col-md-8">
-	<a href="/project/projectField/admin">&lt;-- Back to manage project fields</a>
-</div>
 <?php
+$this->menu=array(
+    array('label'=>ProjectModule::t('Create Project Field'), 'url'=>array('create')),
+    array('label'=>ProjectModule::t('View Project Field'), 'url'=>array('view','id'=>$model->id)),
+	array('label'=>ProjectModule::t('Update Project Field'), 'url'=>array('update','id'=>$model->id)),
+    array('label'=>ProjectModule::t('Manage Project Fields'), 'url'=>array('admin')),
+);
+$this->widget('zii.widgets.CMenu', array(
+	'items'=>$this->menu,
+	'htmlOptions'=>array('class'=>'operations'),
+));
+
 $form=$this->beginWidget('UActiveForm', array(
 	'id'=>'work-types-form',
 	'action' => Yii::app()->createUrl('/project/projectField/update',array('id'=>$model->id)),

@@ -13,14 +13,19 @@
 class Templates extends CActiveRecord
 {
 	const TYPE_AUTHOR = 2;
+	const TYPE_CORRECTOR = 3;
 	const TYPE_CUSTOMER = 1;
 	const TYPE_AUTHOR_RESPONSE_PROJECT = 25;
+	// 26 - мыло для техрука
+	const TYPE_FOR_CUSTOMER_AGREEMENT_NOT_ACCEPTED = 27;
+	const TYPE_FOR_MANAGER_AGREEMENT_NOT_ACCEPTED = 28;
+	//31 - всплывающая подсказка при отправлении сообщения заказчиком
 
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName() {
-		return Campaign::getId().'_Templates';
+		return Company::getId().'_Templates';
 	}
 
 	/**
@@ -58,9 +63,9 @@ class Templates extends CActiveRecord
 	{
 		return array(
 			'id' => Yii::t('site','ID'),
-			'name' => Yii::t('site','Name'),
-			'title' => Yii::t('site','Title'),
-			'text' => Yii::t('site','Text'),
+			'name' => Yii::t('site','Question category'), //Yii::t('site','Name'),
+			'title' => Yii::t('site','Question'), //Yii::t('site','Title'),
+			'text' => Yii::t('site','Answer text'), //Yii::t('site','Text'),
 			'type_id' => Yii::t('site','Type'),
 		);
 	}
@@ -99,6 +104,8 @@ class Templates extends CActiveRecord
 			1 => Yii::t('site','Customer'),
 			2 => Yii::t('site','Author'),
 			3 => Yii::t('site','Service'),
+			4 => Yii::t('site','Hint for manager'),
+			5 => Yii::t('site','Tip'),
 			10 => Yii::t('site','Service mail: Password recovery'), //Восстановление пароля
 			11 => Yii::t('site','Service mail: Registration'), //Успешная регистрация
 			12 => Yii::t('site','Service mail: Project accepted'), //Регистрация проекта
@@ -115,6 +122,14 @@ class Templates extends CActiveRecord
 			23 => Yii::t('site','Service mail: new revision'), //О новой доработке
 			24 => Yii::t('site','Service mail: your salary'), //Об оплате заказа
 			25 => Yii::t('site','Message for an author in response to project'), //Сообщение для автора при отклике на проект
+			26 => Yii::t('site','Notification for correctors'), // Уведомление для технических руководителей
+			27 => Yii::t('site','Message for a customer when the agreement was not accepted'), //Сообщение для клиента, когда он не согласен с условиями соглашения
+			28 => Yii::t('site','Message for a manager that the agreement was not accepted by the customer'), //Сообщение для менеджера, что соглашение не было принято заказчиком
+			29 => Yii::t('site','Button in chat for author'), // Шаблоны для кнопок в чате исполнителя
+			30 => Yii::t('site','Button in chat for guest'), // Шаблон для кнопок в заказе гостя
+			31 => Yii::t('site','Hint for customer when he sending a message'), // Шаблон для кнопок в заказе гостя
+			32 => Yii::t('site','Notification for executor about the occurrence timing of the completion of the order'), // Шаблон уведовления о сроках завершения заказа
+			33 => Yii::t('site','Notification for executor about the occurrence timing of the completion of the completion point'), // Шаблон уведовления о сроках завершения этапа заказа
 		);
 	}
 	
@@ -135,6 +150,75 @@ class Templates extends CActiveRecord
 	
 	public function getTemplate($type_id){
 		$template = $this->findByAttributes(array('type_id'=>$type_id));
-		return  $template->text;
+		if($template) return  $template->text;
+		else return null;
+	}
+
+	public function getTemplateList($type_id){
+		$templates = $this->findAllByAttributes(array('type_id'=>$type_id));
+		$custom_arr = array();
+		foreach ($templates as $item)
+			$custom_arr[$item->name] = $item->text;
+		return $custom_arr;
+	}
+	
+    protected function replaceBBCode($text_post) {
+        $str_search = array(
+            "#\\\n#is",
+            "#\[b\](.+?)\[\/b\]#is",
+            "#\[i\](.+?)\[\/i\]#is",
+            "#\[u\](.+?)\[\/u\]#is",
+            "#\[code\](.+?)\[\/code\]#is",
+            "#\[quote\](.+?)\[\/quote\]#is",
+            "#\[url=(.+?)\](.+?)\[\/url\]#is",
+            "#\[url\](.+?)\[\/url\]#is",
+            "#\[img\](.+?)\[\/img\]#is",
+            "#\[size=(.+?)\](.+?)\[\/size\]#is",
+            "#\[color=(.+?)\](.+?)\[\/color\]#is",
+            "#\[list\](.+?)\[\/list\]#is",
+            "#\[listn](.+?)\[\/listn\]#is",
+            "#\[\*\](.+?)\[\/\*\]#"
+        );
+        $str_replace = array(
+            "<br />",
+            "<b>\\1</b>",
+            "<i>\\1</i>",
+            "<span style='text-decoration:underline'>\\1</span>",
+            "<code class='code'>\\1</code>",
+            "<table width = '95%'><tr><td>Цитата</td></tr><tr><td class='quote'>\\1</td></tr></table>",
+            "<a href='\\1'>\\2</a>",
+            "<a href='\\1'>\\1</a>",
+            "<img src='\\1' alt = 'Изображение' />",
+            "<span style='font-size:\\1%'>\\2</span>",
+            "<span style='color:\\1'>\\2</span>",
+            "<ul>\\1</ul>",
+            "<ol>\\1</ol>",
+            "<li>\\1</li>"
+        );
+        return preg_replace($str_search, $str_replace, $text_post);
+    }
+
+    public function insertVariables($in, $orderId){
+        $in = $this->replaceBBCode($in);
+        preg_match_all("/\{(.+?)\}/is",$in,$out);
+        foreach ($out[1] as $k=>$o) {
+            $var = explode('_', $o);
+            $model_name = ucfirst(array_shift($var));
+			if(@class_exists($model_name)){
+				if($model_name == 'Projectpayments') $model = ProjectPayments::model()->find('order_id = :ORDER_ID', array( ':ORDER_ID'=>$orderId ));
+				elseif($model_name == 'Company') $model = Company::getCompany();
+				else $model = $model_name::model()->findByPk($orderId);
+				$var = implode('_', $var);
+				if($model && in_array($var,$model->attributeNames()))
+					$fields[$k] = $model->$var;
+				elseif($model) 
+					$fields[$k] = '#wrong property#';
+				else
+					$fields[$k] = '#cant find model#';
+			} else {
+				$fields[$k] = '#wrong model#';
+			}
+        }
+        return str_replace($out[0],$fields,$in);
 	}
 }

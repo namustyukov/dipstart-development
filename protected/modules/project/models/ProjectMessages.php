@@ -2,6 +2,15 @@
 
 class ProjectMessages extends CActiveRecord
 {
+	public $roles = [
+		1 => 'Admin',
+        2 => 'Author',
+        3 => 'Corrector',
+        4 => 'Customer',
+        5 => 'Manager',
+        6 => 'Executor',
+	];
+
 	//public static $table_prefix;
 	
 	public function tableName() {
@@ -17,13 +26,24 @@ class ProjectMessages extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('message, sender, moderated, date, order', 'required'),
-			array('sender, recipient, moderated, order', 'numerical', 'integerOnly'=>true),
+			array('sender, recipient, moderated, order, sender_role, recipient_role', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('cost', 'safe'),
-			array('id, message, sender, recipient, moderated, date, order, cost', 'safe', 'on'=>'search'),
+			array('id, message, sender, recipient, moderated, date, order, cost, sender_role, recipient_role', 'safe', 'on'=>'search'),
 		);
 	}
+
+	public function getRole($id)
+    {
+        return $this->roles[$id];
+    }
+
+    public function getRoleId($name)
+    {
+        foreach ($this->roles as $key => $value)
+        	if ($value == $name) return $key;
+    }
 
 	/**
 	 * @return array relational rules.

@@ -104,13 +104,13 @@ class ChangesController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionAdd($project) {
+	
         if (!Yii::app()->request->isAjaxRequest) {
             return false;
         }
 
 		$c_id = Company::getId();
 		if ($c_id) {
-			ProjectChanges::$table_prefix = $c_id.'_';
 			ProjectChanges::$file_path = 'uploads/c'.$c_id.'/changes_documents';
 		} else {
 			ProjectChanges::$file_path = 'uploads/changes_documents';
@@ -127,7 +127,7 @@ class ChangesController extends Controller {
             if (!empty($model->fileupload)) {
                 //$model->file = 'no';
             } else {
-				echo  CJSON::encode(array('test' => array('text' => 'file-not-uploaded')));
+				echo  CJSON::encode(array('error' => array('text' => 'file-not-uploaded')));
 				Yii::app()->end();
 			}
             if (ProjectChanges::approveAllowed()) {
@@ -137,12 +137,21 @@ class ChangesController extends Controller {
             }
 			
             if (!$model->validate()) {
-                echo CJSON::encode(array('error' => CJSON::decode(CActiveForm::validate($model))));
+                echo CJSON::encode(array('error' => array('text' =>print_r($model->errors, true))));
                 Yii::app()->end();
             }
+			
+			//echo CJSON::encode(array('error' => array('text' => 'Ups!')));
+			//Yii::app()->end();
+			
             try {
                 if ($model->isAllowedAdd() && $model->save(false)) {
                     if (!(User::model()->isManager() || User::model()->isAdmin())) EventHelper::addChanges($model->project_id);
+                    if ($model->moderate == 1)
+                    {
+                        $orderModel = Zakaz::model()->findByPk($model->project_id);
+                        $orderModel->setExecutorEvents(4);
+                    }
                     echo CJSON::encode(array('success' => true));
                     Yii::app()->end();
                 } else {
@@ -190,6 +199,8 @@ class ChangesController extends Controller {
             }
 
             if ($model->save(false)) {
+                if ($model->moderate == 1 && $order)
+                    $order->setExecutorEvents(4);
                 echo CJSON::encode(array('success' => true, 'approve' => ($model->isModerate() ? 'true' : 'false')));
                 Yii::app()->end();
             }

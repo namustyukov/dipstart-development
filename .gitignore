@@ -4,6 +4,7 @@ protected/runtime
 protected/backup
 cgi-bin
 protected/config/main.php
+protected/config/db.php
 madm
 webstat
 comments.txt

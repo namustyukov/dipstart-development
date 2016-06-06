@@ -20,13 +20,13 @@ h1, .h1 {
 .btn {opacity:0.8;-webkit-border-radius:0;border-radius:0;}
 .btn:hover {opacity:1; -webkit-transition: all 0.2s ease; -moz-transition: all 0.2s ease; -o-transition: all 0.2s ease; transition: all 0.2s ease;	cursor: pointer;}
 
-.container {margin-top: 50px;}
+.container {margin-top: 40px;}
 
 .chatBlock {
-border: none;
-margin: 15px 0;
-width: 100%;
-padding: 0;
+	border: none;
+	margin: 15px 0 0 0;
+	width: 100%;
+	padding: 0;
 }
 
 .you textarea {
@@ -40,9 +40,7 @@ border: 1px solid #ddd;
 border: 1px solid #ddd;
 padding: 10px;
 }
-input[name="yt2"] {
-height:35px!important;
-}
+
 .notesBlockTextarea {border: 1px solid #ddd;}
 
 .hasDatepicker {
@@ -73,9 +71,8 @@ margin: 10px;
 }
 
 .list-changes-comment {
-margin: 10px 0;
-font-style: italic;
-font-size: 13px;
+	font-style: italic;
+	font-size: 12px;
 }
 
 .terms-columns input {
@@ -83,10 +80,10 @@ width: 120px;
 }
 
 .list-changes-block {
-border: 1px solid #eee;
-margin-bottom: 15px;
-padding: 10px;
-background-color: #FAFAFA;
+	border: 1px solid #eee;
+	margin-bottom: 5px;
+	padding: 5px;
+	overflow: hidden;
 }
 
 .panel-title a {
@@ -104,10 +101,7 @@ width:10%;
 height:10%;
 margin-top:5px;
 }
-.panel-group .panel {
-margin-bottom: 30px;
-margin-top: 20px;
-}
+
 .form label {
 display: inline-block;
 text-transform: uppercase;
@@ -119,24 +113,23 @@ margin-top: 15px;
 
 textarea, select {border: 1px solid #ddd;}
 
-.chtpl0-panel
-{
-height: 50px;
-width: 100%;
-position:relative;
-bottom:15px;
+.chtpl0-panel {
+	height: 50px;
+	width: 100%;
+	position:relative;
+	bottom:15px;
 }
 
 .chtpl0-form {
-margin-top: 20px;
+	margin-top: -15px;
 }
 .chtpl0-form p {
 position:relative;
 bottom:20px!important;
 }
 .confirm-the-payment {
-float:left;
-margin-top: 20px;
+	float:left;
+	margin-top: 10px;
 }
 
 .confirm-the-payment span {
@@ -186,7 +179,22 @@ a.link-to-material {
 	padding-top: 5px;
 	overflow: hidden;
 	width: 65%;
+	width: calc(100% - 15px);
 	word-wrap: break-word;
+	border-bottom: 1px dashed #337ab7;
+}
+.qq-upload-list i {
+	margin-top: 8px;
+}
+.qq-upload-list li a#parts_file, div.list-changes-filename > a, .chtpl0-nickname a, .order-contacts a {
+	word-wrap: normal;
+	border-bottom: 1px dashed #337ab7;
+}
+
+.order-contacts br + div, .order-contacts br + div + div {
+	position: relative;
+	top: -20px;
+	margin-bottom: -20px;
 }
 
 .pay-save-btn {-webkit-border-radius:0;border-radius:0;}
@@ -246,18 +254,18 @@ top: 0;
 }
 
 .info-block {
-	margin-top: 10px;
-	margin-bottom: 20px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .table-striped label {margin-top: 0;}
 
 .operations {
-	/*margin-top: 50px;*/
+	margin-top: 10px;
 	display: block;
 	list-style-type: none;
 	padding: 0;
- border: 1px solid #CEDFED;
+	border: 1px solid #CEDFED;
 }
 
 .operations li {
@@ -453,4 +461,78 @@ p.success {
 div.link-for-executors {
 	width: 100%;
 	text-align: center;
+}
+.instant-send-buttons {
+    height: 22px;
+	margin: 0;
+    padding: 0;
+	border: 0;
+}
+.bg-gray {
+	background-color: #ccc;
+}
+.instant-send-buttons img {
+	margin: 0;
+	height: 22px;
+}
+.last-delivery {
+	font-size: 8px;
+}
+.block-title {
+	font-size: 13px;
+	color: gray;
+}
+.block-title label {
+	text-transform: capitalize;
+}
+.panel-default {
+	margin-top: 10px;
+}
+.new-revision-button {
+	font-size: 30px;
+	color: #75B865;
+	padding-top: 15px;
+}
+button.change-approve {
+	position: absolute;
+	margin-left: -2px;
+}
+.list-changes-filename {
+	display: inline-block;
+	margin-left: 30px;
+}
+.float-right {
+	float: right;
+}
+.stage .title-name input {
+	min-width: 100px;
+	width: calc(100% - 110px);
+}
+.grid-view table.items th, .grid-view table.items td, .grid-view table.items {
+	border: 0;
+}
+.table tr, .grid-view table.items td {
+	border-bottom: 1px dotted #ccc;
+}
+.grid-view table.items tr.odd, .grid-view table.items tr.even {
+	background: transparent;
+}
+.hint-block_content td {
+	height: auto;
+	padding: 5px;
+}
+.inline-block {
+	display: inline-block;
+}
+.qq-upload-list li a#parts_file {
+	width: 84%;
+	width: calc(100% - 50px);
+	max-width: 90%;
+}
+#user-grid_c0 {
+	width: 55px;
+}
+textarea#code {
+	min-width: 100%;
+	min-height: 300px;
 }

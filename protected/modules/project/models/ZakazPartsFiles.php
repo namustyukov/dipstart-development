@@ -10,15 +10,10 @@
  * @property string $file_name
  * @property string $comment
  */
-class ZakazPartsFiles extends CActiveRecord
-{
-	public static $table_prefix;
-	
+class ZakazPartsFiles extends CActiveRecord {
+
 	public function tableName() {
-		if(isset(self::$table_prefix))
-			return self::$table_prefix.'ZakazPartsFiles';
-		else
-			return 'ZakazPartsFiles';
+		return Company::getId().'_ZakazPartsFiles';
 	}
 
 	public function folder() {

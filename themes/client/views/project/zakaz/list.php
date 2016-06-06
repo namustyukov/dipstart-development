@@ -14,15 +14,39 @@ $this->breadcrumbs=array(
 <h1><?=ProjectModule::t('Zakazs')?></h1>
 <h1 class='projects-title'><?=ProjectModule::t('SelectProject')?></h1>
 <?php
-if (Campaign::getId()){
+if (Company::getId()){
 	$columns = array(
 		'id',
 		'title',
-		'closestDate',
 	);
+
+	if (ProjectField::model()->inTableByVarname('specials')) {
+		$columns[] = array(
+			'name'=>'specials',
+			'filter'=>Catalog::getAll('specials'),
+			'value'=>'$data->catalog_specials->cat_name',
+		);
+	}
+	if (ProjectField::model()->inTableByVarname('specials2')) {
+		$columns[] = array(
+			'name'=>'specials2',
+			'filter'=>Catalog::getAll('specials2'),
+			'value'=>'$data->catalog_specials2->cat_name',
+		);
+	}
+	$columns[] = 'closestDate';
+
+	if (!isset($only_new))
+		$columns[] = [
+			'name' => 'executor_event',
+            'value' => '$data->getExecutorEvents()',
+            'type' => 'raw',
+		];
 }
 
-if (isset($only_new)) {
+if (User::model()->isCorrector() && $tech) {
+	$url = Yii::app()->createUrl('/project/chat',array('role'=>'Corrector', 'orderId'=>''));
+} elseif (isset($only_new)) {
 	$url = Yii::app()->createUrl('/project/chat/view',array('orderId'=>'')).'/';
 	if (User::model()->isAuthor()) {
 		if(!$profile) echo '<div class="advice">'.ProjectModule::t('It is recommended to fill in the profile...').'</div>';

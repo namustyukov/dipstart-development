@@ -237,6 +237,11 @@ label
 {
     font-weight: normal;
 }
+@media (min-width: 1000px) {
+#agreement .modal-dialog .modal-content, #agreement .modal-dialog {
+    min-width: 900px;
+}
+}
 .aboutZakaz
 {
 
@@ -906,4 +911,43 @@ div.second-tab{
 }
 .select-mailing-list{
 	width:	280px;
+}
+div.stage {
+    color: #333;
+    background-color: #f5f5f5;
+    padding: 10px 15px;
+    margin: 0 15px 18px;
+    border: 1px solid #ddd;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+div.stage-number {
+    position: absolute;
+    margin-top: -25px;
+    margin-left: -35px;
+    color: #111;
+    background-color: #fafafa;
+    padding: 7px 7px;
+    border: 1px solid #ddd;
+    border-radius: 18px;
+    width: 36px;
+    text-align: center;
+}
+div.stage-first-column {
+    float: left;
+    color: #777;
+    padding-right: 7px;
+    min-width: 111px;
+}
+div.stage-second-column {
+    margin-left: 121px;
+    margin-bottom: 5px;
+    min-height: 20px;
+}
+.container-view .list-changes-block {
+    margin-bottom: 5px;
+}
+.container-view .list-changes-comment {
+    margin: 0px;
+    padding: 0px;
 }

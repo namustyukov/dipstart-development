@@ -2,13 +2,8 @@
 
 class Events extends CActiveRecord {
     
-	public static $table_prefix;
-	
 	public function tableName() {
-		if(isset(self::$table_prefix))
-			return self::$table_prefix.'ProjectsEvents';
-		else
-			return 'ProjectsEvents';
+		return Company::getId().'_ProjectsEvents';
 	}
     
     public function rules() {

@@ -9,6 +9,11 @@ if (Campaign::getId()){
 	$columns = array(
 		'id',
 		'title',
+		[
+			'name' => 'customer_event',
+            'value' => '$data->getCustomerEvents()',
+            'type' => 'raw',
+		],
 	);
 }/* else {
 	$columns = array(

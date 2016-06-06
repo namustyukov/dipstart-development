@@ -9,6 +9,8 @@
  */
 class PartStatus extends CActiveRecord
 {
+	
+	const COMPLETED = 5;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -96,5 +98,11 @@ class PartStatus extends CActiveRecord
 		foreach (self::model()->findAll() as $k=>$v)
 			$res[$v['id']]=$v['status'];
 		return $res;
+	}
+	
+	public static function getStatus($status_id)
+	{
+		$status = self::model()->findByPk($status_id);
+		return $status->status;
 	}
 }

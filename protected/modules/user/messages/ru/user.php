@@ -41,7 +41,7 @@ return array(
 	'Incorrect activation URL.' => 'Неправильная ссылка активации учетной записи.',
 	'Registration date' => 'Дата регистрации',
 	'Last visit' => 'Последний визит',
-	'Superuser' => 'Супер пользователь',
+	'Superuser' => 'Админ',
 	'Status' => 'Статус',
 	'Ok' => 'Ok',
 	'Show all'=> 'Показать все',
@@ -56,6 +56,7 @@ return array(
 	'Thank you for your registration. Please {{login}}.' => 'Спасибо за регистрацию. <br>Пароль был отправлен Вам на почту. <br>Вы можете авторизоваться перейдя по ссылке {{login}}',
 	'Thank you for your registration. Contact Admin to activate your account.' => 'Регистрация завершена. Пожалуйста свяжитесь с администрацией сайта для активации аккаунта.',
 	'Thank you for your registration. Password has been sent to your e-mail. Please check your e-mail ({{email}}) before start.' => 'Спасибо за регистрацию. <br>Пароль был отправлен Вам на почту. <br>Проверьте свою почту {{email}} перед началом работы.',
+	'New customer {link} have registred' => 'В системе зарегистрировался новый заказчик {link}',
 	'Restore' => 'Восстановить',
 	'Please enter your login or email addres.' => 'Пожалуйста, введите Ваш логин или адрес электронной почты.',
 	'Incorrect recovery link.' => 'Неправильная ссылка востановления пароля.',
@@ -134,8 +135,14 @@ return array(
 	'Advanced Search' => 'Расширенный поиск',
 	'You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b> or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.'=>'Вы можете использовать операторы сравнения (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b> or <b>=</b>) установив их перед значением.',
     'User rights' => 'Права пользователей',
-    'Customer'  => 'Заказчик',
+    'Customer' => 'Заказчик',
     'Author' => 'Автор',
+	'Executor' => 'Исполнитель',
+	'Admin' => 'Администратор',
+	'Manager' => 'Менеджер',
+	'Webmaster' => 'Вэбмастер',
+	'Corrector' => 'Корректор',
+	'Roles' => 'Роли',
     'Hello, please fill an anket for authorsAuthor' => 'Здравствуйте, заполните, пожалуйста, Вашу анкету автора научных работ... ',
     'Hello, please fill an anket for authorsCustomer' => 'Здравствуйте, заполните Вашу анкету ',
     'Use Ctrl for multiply' => 'Используйте Ctrl для мульти выбора',
@@ -174,7 +181,10 @@ return array(
 	'deleted the file out of order' =>  'удалил файл из заказа',
 	'left a message' =>  'оставил сообщение',
 	'The user changed data in the profile' =>  'Пользователь изменил данные в профиле',
-	
+	'accepted order' =>  'проверил заказ',
+	'Order reminder' => 'Напоминание о заказе: ',
+	'Stage expired' => 'Срок этапа истёк... заказ: ',
+
 	// customerOrderList.php
 	'CurrentProjects' => 'Текущие проекты',
 	'DoneProjects' => 'Завершённые проекты',
@@ -238,7 +248,10 @@ return array(
 	'payed for order'=>'оплатил заказ',
 	'Cell number' => 'Номер телефона',
 	
-	'Edit assignments' => 'Редактировать назначения',
+	'Edit assignments' => 'Редактировать тип пользователя',
 	'Rating' => 'Рейтинг',
+	'Recive new projects notifications' => 'Получать уведомления о новых проектах',
+	'Receive notification of the occurrence of terms' => 'Получать уведомление о наступлении сроков',
+	'Time notification' => 'Время за которое необходимо уведомить',
 );
 

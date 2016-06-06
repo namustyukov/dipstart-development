@@ -154,9 +154,15 @@ class Payment extends CActiveRecord {
 		return true;
 	}
 	
-	public function getTotalData()
-	{
+	public function getTotalData() { // Is it need ?
 		return Yii::app()->db->createCommand("SELECT payment_type, SUM(summ) AS s, COUNT(*) AS ctn FROM `" . self::tableName() . "` GROUP BY payment_type ORDER BY payment_type")->queryAll();
+	}
+	
+	public function pageTotal($provider) {
+		$total=0;
+		foreach($provider->data as $item)
+			$total+=$item->summ;
+		return $total;
 	}
         
 	/**

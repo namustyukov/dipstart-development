@@ -3,6 +3,7 @@
 class ZakazPartWidget extends CWidget{
     public $number;
 	public $projectId;
+	public $hints;
 	public $status;
 	public $item_id;
 	public $record_id;
@@ -14,7 +15,12 @@ class ZakazPartWidget extends CWidget{
 
     public function init() {
         $this->arrDataProvider = new CArrayDataProvider(
-            ZakazParts::model()->with('files')->findAllByAttributes(['proj_id'=>$this->projectId])
+            ZakazParts::model()->with('files')->findAllByAttributes(['proj_id'=>$this->projectId]),
+			array(
+				'pagination'=>array(
+					'pageSize'=>100,
+				),
+			)
         );
     }
 
@@ -27,7 +33,6 @@ class ZakazPartWidget extends CWidget{
 		$data = $this->arrDataProvider->getData();
 		$records = PartStatus::model()->findAll();
 		$number = 0;
-
 		foreach ($data as $this->item_id => $item) {
 			$number++;
 			if (User::model()->isCustomer() && $item->status_id == 4)
@@ -39,26 +44,7 @@ class ZakazPartWidget extends CWidget{
 			$this->record_id = $item->id;
 			$this->status_id = $item->status_id;
 			
-			$this->select = "
-				<script type=\"text/javascript\">
-					function status_changed_$this->record_id( item_id ){
-						var status_id = document.getElementById('select-status-$this->record_id').value;
-						var orderId = $('#order_number').text();
-						$.ajax({
-							type: \"POST\",
-							url:'http://'+document.domain+'/project/zakazParts/status'
-							, data : 'cmd=status&status_id='+status_id+'&id='+item_id+'&orderId='+orderId
-							, success: function(html) {
-								/*html = BackReplacePlusesFromStr(html);*/
-								if (html != 'null') {
-									/*alert(html);*/
-								}
-							}
-						});
-					}
-				</script>";
-
-			$this->select.= '<select name="select-status-'.$this->record_id.'" id="select-status-'.$this->record_id.'" onchange="status_changed_'.$this->record_id.'('.$this->record_id.'); return false;">';
+			$this->select = '<select name="select-status-'.$this->record_id.'" id="select-status-'.$this->record_id.'" onchange="stage_change_status('.$this->record_id.'); return false;">';
 			foreach ($records as $rec) {
 				$this->select.= "<option value='$rec->id' ";
 				if ($rec->id == $item->status_id) $this->select.= 'selected="selected"';

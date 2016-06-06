@@ -1,4 +1,4 @@
-var TYPE_CUSTOMER = 1, TYPE_AUTHOR = 2;
+var TYPE_CUSTOMER = 1, TYPE_AUTHOR = 2, TYPE_CORRECTOR = 3;
 
 $('.select_recipient').on('change', function () {
 	$('.msg_answer').html('');
@@ -6,7 +6,7 @@ $('.select_recipient').on('change', function () {
     var submitButton = $('.chtpl0-submit1');
     var templateButton = $('.attach_template');
     $('.chat_templates_wrapper').addClass('hidden');
-    if (TYPE_CUSTOMER !== value && TYPE_AUTHOR !== value) {
+    if (TYPE_CUSTOMER !== value && TYPE_AUTHOR !== value && TYPE_CORRECTOR !== value) {
         templateButton.addClass('hidden');
         submitButton.addClass('disabled');
         return;
@@ -15,8 +15,11 @@ $('.select_recipient').on('change', function () {
     templateButton.removeClass('hidden');
     submitButton.removeClass('disabled');
 
+    if (TYPE_CORRECTOR === value)
+        templateButton.addClass('hidden');
+
     $('.template_type_' + value).removeClass('hidden');
-    var recipient = TYPE_CUSTOMER === value ? 'Customer' : 'Author';
+    var recipient = TYPE_CUSTOMER === value ? 'Customer' : (TYPE_CORRECTOR === value ? 'Corrector' : 'Author');
     submitButton.data('recipient', recipient);
 });
 

@@ -1,14 +1,9 @@
 <?php
 
-class ProjectPayments extends CActiveRecord
-{
-	public static $table_prefix;
-	
+class ProjectPayments extends CActiveRecord {
+
 	public function tableName() {
-		if(isset(self::$table_prefix))
-			return self::$table_prefix.'ProjectPayments';
-		else
-			return 'ProjectPayments';
+		return Company::getId().'_ProjectPayments';
 	}
 
 	/**

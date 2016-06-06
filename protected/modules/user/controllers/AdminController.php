@@ -21,12 +21,12 @@ class AdminController extends Controller {
 	 */
 	public function accessRules() {
 		return array(
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+			/*array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete','create','update'),
 				'users'=>UserModule::getAdmins(),
-			),
+			),*/
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('view'),
+				'actions'=>array('view','admin','delete','create','update'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -40,6 +40,7 @@ class AdminController extends Controller {
 	public function actionAdmin()
 	{
 		$model=new User('search');
+		//$model = User::model()->search();
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['User']))
 			$model->attributes=$_GET['User'];
@@ -110,29 +111,29 @@ class AdminController extends Controller {
 	 */
 	public function actionUpdate()
 	{
-		$model		= $this->loadModel();
-		$profile	= $model->profile;
-		if(!$profile) $profile = new Profile;
+		$model = $this->loadModel();
+		if($model->profile == null) {
+			$model->profile = new Profile;
+			$model->profile->user_id = $model->id;
+		}
+		$profile = $model->profile;
 		$this->performAjaxValidation(array($model,$profile));
 
 		$manager = !User::model()->isAuthor();
 		$admin	 = User::model()->isAdmin();
 
-		if(isset($_POST['User']))
-		{
-			
+		if(isset($_POST['User'])) {
 			$model->attributes=$_POST['User'];
-			$_POST['Profile']['mailing_list'] = array_search($_POST['Profile']['mailing_list'],array('','icq','sms','email'));
 			$profile->setAttributes($_POST['Profile'], false);
 			if($model->validate()&&$profile->validate()) {
-				$old_password = User::model()->notsafe()->findByPk($model->id);
+				/*$old_password = User::model()->notsafe()->findByPk($model->id);
 				if ($old_password->password!=$model->password) {
 					$model->password=Yii::app()->controller->module->encrypting($model->password);
 					$model->activkey=Yii::app()->controller->module->encrypting(microtime().$model->password);
-				}
+				}*/
 				$model->save();
 				$profile->save();
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('update','id'=>$model->id));
 			} else $profile->validate();
 		};
 

@@ -17,7 +17,7 @@ class RegistrationForm extends User {
 			//array('username', 'unique', 'message' => UserModule::t("This user's name already exists.")),
 			array('email', 'unique', 'message' => UserModule::t("This user's email address already exists.")),
 			//array('verifyPassword', 'compare', 'compareAttribute'=>'password', 'message' => UserModule::t("Retype Password is incorrect.")),
-			array('phone_number', 'match', 'pattern' => '/^[-+()0-9]+$/u','message' => UserModule::t("Incorrect symbols (0-9,+,-,(,)).")),
+			array('phone_number', 'match', 'pattern' => '/^[-+()0-9 ]+$/u','message' => UserModule::t("Incorrect symbols (0-9,+,-,(,)).")),
 			array('pid', 'numerical', 'integerOnly'=>true),
 		);
 		/*if (!(isset($_POST['ajax']) && $_POST['ajax']==='registration-form')) {
@@ -28,4 +28,12 @@ class RegistrationForm extends User {
 		return $rules;
 	}
 	
+	public function beforeValidate() {
+		$this->email = trim($this->email);
+		return parent::beforeValidate();
+	}
+	public function beforeSave() {
+		$this->email = trim($this->email);
+		return parent::beforeSave();
+	}
 }

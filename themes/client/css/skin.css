@@ -799,7 +799,7 @@ width: 50%;*/
 	display: inline;
 	position: relative;
 	top: -2px;
-	margin-right: 20px;
+	margin-right: 5px;
  margin-left: 5px;
 }
 
@@ -1374,4 +1374,19 @@ ul.files-list {
 	padding-left: 0px;
 	overflow: hidden;
 	margin-bottom: 0px;
+}
+.chat-buttons h4{
+  font-size: 14px;
+  font-weight: normal;
+}
+.btn-link {
+	color: white;
+}
+.btn-link:active, .btn-link:hover, .btn-link:focus, .btn-link:active {
+	text-decoration: none;
+	color: white;
+}
+
+.parentBlock select {
+	width: 100%;
 }

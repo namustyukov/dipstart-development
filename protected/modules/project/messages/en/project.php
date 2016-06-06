@@ -20,6 +20,7 @@ return array(
     'Projects' => 'Проекты',
     'Zakazs' => 'Projects',
     'Author' => 'Author',
+    'Corrector' => 'Technical manager',
     'Zakaz' => 'Project',
     'Create Zakaz' => 'Create Project',
     'Manage Zakaz' => 'Manage Project',
@@ -28,6 +29,7 @@ return array(
     'List Zakaz' => 'Projects List',
     'Create' => 'Create',
     'Save' => 'Save',
+    'Technical spec accepted' => 'Checked technical manager',
     'Select a category' => 'Select a category',
     'Select a job' => 'Select a job',
     'Yes' => 'Yes',
@@ -72,6 +74,11 @@ return array(
     'Job name' => 'Job name',
     'Name of educational discipline' => 'Name of educational discipline',
     'The new revision' => 'The new revision',
+    'Change in the ordering information' => 'Change in the ordering information',
+    'Message in chat' => 'Message in chat',
+    'Changing the timing' => 'Changing the timing',
+    'Added revision' => 'Added revision',
+    'Added step' => 'Added step',
 
     ///project/zakaz/update/id/x
     'Customer' => 'Customer',
@@ -117,6 +124,9 @@ return array(
 	'To pay:' => 'To pay:',
 	'Payed:' => 'Payed:',
 	'closestDate' => 'Closest stages deadline',
+    'technicalspec' => 'Requires a technical specialist',
+    'executor_event' => 'Events for executor',
+    'customer_event' => 'Events for customer',
 
     //Блок оплаты
     'Payments' => 'Payments',
@@ -132,6 +142,9 @@ return array(
     'Cancel' => 'Cancel',
     'Save' => 'Save',
     'Confirm payment:' => 'Confirm the payment:',
+
+    //Блок советов
+    'Tips' => 'Tips',
 
     'List ZakazParts' => 'ProjectPart List',
     'Manage Zakaz Parts' => 'ProjectPart Manage',
@@ -210,5 +223,7 @@ return array(
 	'upperckeckbox' => 'UpperCkeckbox',
 	'It is recommended to fill in the profile...' => 'It is recommended to fill in the profile. The filled profile increases the likelihood of obtaining new orders!',
 	'We also have other orders in this specialty. To see...' => 'We also have other orders in this specialty. To see the full list, as well as to be notified about new orders you have to register in the system.',
-	
+	'Thank you! Your proposal is on the process...' => 'Thank you! Your proposal is on the process!<br><br>If your proposition is the most suitable, you will be assigned as the Performer of the order.<br>The notification will be sent to your e-mail. Also we recommend you to find out more about other orders on your specialty.<br><br>* As a rule, the selection of the Performer is accomplished during the day or earlier.',
+	'to corrector' => 'to technical manager',
+
 );

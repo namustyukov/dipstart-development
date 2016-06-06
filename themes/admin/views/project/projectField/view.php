@@ -1,13 +1,9 @@
 <?php
-$this->breadcrumbs=array(
-	UserModule::t('Profile Fields')=>array('admin'),
-	UserModule::t($model->title),
-);
 $this->menu=array(
-    array('label'=>UserModule::t('Create Profile Field'), 'url'=>array('create')),
-    array('label'=>UserModule::t('Update Profile Field'), 'url'=>array('update','id'=>$model->id)),
-    array('label'=>UserModule::t('Delete Profile Field'), 'url'=>'#','linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>UserModule::t('Are you sure to delete this item?'))),
-    array('label'=>UserModule::t('Manage Profile Field'), 'url'=>array('admin')),
+    array('label'=>ProjectModule::t('Create Project Field'), 'url'=>array('create')),
+    array('label'=>ProjectModule::t('Update Project Field'), 'url'=>array('update','id'=>$model->id)),
+    array('label'=>ProjectModule::t('Delete Project Field'), 'url'=>'#','linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>UserModule::t('Are you sure to delete this item?'))),
+    array('label'=>ProjectModule::t('Manage Project Fields'), 'url'=>array('admin')),
 );
 $this->widget('zii.widgets.CMenu', array(
 	'items'=>$this->menu,

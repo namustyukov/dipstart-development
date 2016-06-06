@@ -2,14 +2,9 @@
 /* @var $this CategoriesController */
 /* @var $model Categories */
 
-$this->breadcrumbs=array(
-	Yii::t('site','Catalog')=>array('index'),
-	Yii::t('site','Manage'),
-);
-
 $this->menu=array(
-	array('label'=>Yii::t('site','List Catalog'), 'url'=>array('index')),
-	array('label'=>Yii::t('site','Create Catalog'), 'url'=>array('create')),
+	//array('label'=>Yii::t('site','List Catalog'), 'url'=>array('index')),
+	array('label'=>Yii::t('site','Create Categories'), 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -45,9 +40,12 @@ $('.search-form form').submit(function(){
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
-		'field_varname',
+		array(
+			'name' => 'field_varname',
+			'filter' => Catalog::getAllVarnames(),
+		),
 		'cat_name',
-		 array(
+		array(
             'name' => 'parent_id',
             'type' => 'raw',
             'value' => 'Catalog::model()->performParent($data->parent_id)',

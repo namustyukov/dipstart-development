@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>Yii::t('site','List Templates'), 'url'=>array('index')),
+	//array('label'=>Yii::t('site','List Templates'), 'url'=>array('index')),
 	array('label'=>Yii::t('site','Manage Templates'), 'url'=>array('admin')),
 );
 ?>

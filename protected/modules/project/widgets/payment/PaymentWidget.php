@@ -3,6 +3,7 @@
 class PaymentWidget extends CWidget {
     
     public $projectId;
+    public $hints;
     
     public function init() {
         

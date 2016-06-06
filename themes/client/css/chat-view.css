@@ -175,6 +175,66 @@ div.text-block a {
 	text-decoration: underline;
 }
 div.text4guests {
-	margin-top: 20px;
+	margin-bottom: 20px;
 	text-align: center;
+}
+.message-buttons{
+	text-align: right;
+	margin-bottom: 20px;
+}
+.message-buttons-items{
+	display: inline-block;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+.message-buttons-text-hidden{
+	display: none;
+}
+.message-buttons .btn-message{
+	font-size: 13px;
+	line-height:19px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-radius: 10px;
+}
+.message-buttons-guest{
+	text-align: right;
+	margin-bottom: 20px;
+}
+.message-buttons-guest-items{
+	position: relative;
+	display: inline-block;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+.message-buttons-guest-text{
+	position:absolute;
+	top:35px;
+	width: 200px;
+	left: 50%;
+	margin-left: -106px;
+	padding:7px 12px;
+	border-radius:5px;
+	background:#4A4A4A;
+	color:#FFFFFF;
+	font-size:11px;
+	z-index:1;
+	text-align:left;
+	display: none;
+}
+.message-buttons-guest-text:after{
+	content:'';
+	position:absolute;
+	border:5px solid transparent;
+	top:-10px;
+	left: 50%;
+	margin-left: -5px;
+	border-bottom:5px solid #4A4A4A;
+}
+.message-buttons-guest .btn-message-guest{
+	font-size: 20px;
+	line-height:19px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-radius: 10px;
 }

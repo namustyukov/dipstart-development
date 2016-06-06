@@ -57,13 +57,13 @@ $(document).ready(function() {
             '<div class="message_send info"><div class="message_send flash-success"><a>'+message_send+'</a></div></div>';
         $('#message_send div.message_send').remove();
         $.post('/project/chat?orderId='+order,{
-            ProjectMessages:{
-		id: id,
-                message: message,
-                recipient: name,
-		order: order,
-		cost: cost
-            }
+			ProjectMessages:{
+				id: id,
+				message: message,
+				recipient: name,
+				order: order,
+				cost: cost
+			}
         },function(data){
               $('#chat').html(data);
 		      if (cost != null) $('div.post.chtpl0-msg.author-message').filter(':last').before(($('div.take-block').data('message')));
@@ -89,7 +89,7 @@ $(document).ready(function() {
     });
     $('#salary-to-chat').click(function(){
 		var cost = $('input#cost').val();
-		view_chat( 'manager', $(this).val(), 0, cost);
+		view_chat( 'author_to_manager', $(this).val(), 0, cost);
 		$('input#cost').val('');
 		$("body,html").animate({scrollTop: $('#chatWindow').offset().top}, 500);
 		return false;
@@ -128,6 +128,10 @@ $(document).ready(function() {
         return false;
     });
 	$('.chat-view').scrollTop(10000);
+
+	$('.message-buttons-items .btn-message').click(function(){
+		$('#message').val($(this).parent().find('.message-buttons-text-hidden').html());
+	});
 });
 function zakaz_done(part_id) { /* Stage is ready */
 		var orderId = $('#order').val();

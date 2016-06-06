@@ -1,10 +1,6 @@
 <?php
-$this->breadcrumbs=array(
-	UserModule::t('Profile Fields')=>array('admin'),
-	UserModule::t('Create'),
-);
 $this->menu=array(
-    array('label'=>UserModule::t('Manage Profile Field'), 'url'=>array('admin')),
+    array('label'=>ProjectModule::t('Manage Project Fields'), 'url'=>array('admin')),
 );
 $this->widget('zii.widgets.CMenu', array(
 	'items'=>$this->menu,

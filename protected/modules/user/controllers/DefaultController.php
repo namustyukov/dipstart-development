@@ -43,7 +43,7 @@ class DefaultController extends Controller {
                 foreach ($prof as $key=>$val) {
 					//echo $val['user_id'].' ';
                     $res=$val->getAttributes();
-                    $res1=$val->AuthAssignment->getAttributes();   //---<<
+                    if($res1=$val->AuthAssignment) $res1=$val->AuthAssignment->getAttributes();   // Непонятное место, без условия бывает глючит ---<<
                     if ($res['discipline']!='') {
                         $res['cat_name']=implode(',',array_intersect_key(array()/*$rescat*/,array_flip(explode(',',$res['discipline']))));
                     }

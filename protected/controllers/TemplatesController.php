@@ -162,7 +162,7 @@ class TemplatesController extends Controller
 			Yii::app()->end();
 		}
 	}
-    protected function replaceBBCode($text_post) {
+    /*protected function replaceBBCode($text_post) {
         $str_search = array(
             "#\\\n#is",
             "#\[b\](.+?)\[\/b\]#is",
@@ -214,5 +214,5 @@ class TemplatesController extends Controller
         $model->text = str_replace($out[0],$fields,$model->text);
 		$response->setData($model);
 		$response->send();
-	}
+	}*/
 }

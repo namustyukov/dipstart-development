@@ -166,6 +166,7 @@ return array(
 	'deleted the file out of order' =>  'deleted the file out of order',
 	'left a message' =>  'left a message',
 	'The user changed data in the profile' =>  'The user changed data in the profile',
+	'accepted order' =>  'checked order',
 
 	// customerOrderList.php
 	'CurrentProjects' => 'Current Projects',

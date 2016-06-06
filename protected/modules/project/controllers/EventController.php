@@ -26,6 +26,15 @@ class EventController extends Controller {
     }*/
     public function actionIndex() {
         if (Yii::app()->request->isAjaxRequest){
+            if (Yii::app()->request->getParam('update'))
+            {
+                $events = Events::model()->findAll(array(
+                    'condition' => '',
+                    'order' => 'timestamp DESC'
+                ));
+                $this->renderPartial('list',array('events'=>$events));
+                Yii::app()->end();
+            }
 
             header('Content-Type: application/json');
             echo CJSON::encode(array('success'=>true,'msg'=>ProjectMessages::model()->findByPk(Events::model()->findByPk(Yii::app()->request->getParam('id'))->event_id)->message));

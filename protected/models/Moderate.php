@@ -17,7 +17,7 @@ class Moderate extends CActiveRecord
 {
 	
 	public function tableName() {
-		return Campaign::getId().'_Moderate';
+		return Company::getId().'_Moderate';
 	}
     
     public static function model($className=__CLASS__)
@@ -60,6 +60,8 @@ class Moderate extends CActiveRecord
             }
 
             $model->save(false);
+            $model->setExecutorEvents(1);
+
             $this->delete();
         } catch (Exception $ex) {
             print_r ($ex);

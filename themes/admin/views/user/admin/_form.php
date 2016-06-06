@@ -52,7 +52,7 @@
 		<?php echo $form->labelEx($model,'email'); ?>
 		</div><div class="right-div-admin-form">
 		<?php $attributes = array('size'=>40,'maxlength'=>128,'placeholder'=>$model->getAttributeLabel( 'email' ).($model->isAttributeRequired('email')?' *':''));?>
-		<?php if (!$admin && $manager && $fields['email']) $attributes['disabled'] = true;	?>
+		<?php if (!$admin && $manager && $model->superuser) $attributes['disabled'] = true;	?>
 		<?php echo $form->textField($model,'email', $attributes); ?>
 		<?php echo $form->error($model,'email'); ?>
 		</div>
@@ -77,6 +77,7 @@
 		<?php $disabled = array(); if (!$admin && $manager && $fields['superuser']) $disabled = array('disabled'=>true);?>
 		<?php echo $form->dropDownList($model,'superuser',$attributes, $disabled); ?>
 		<?php echo $form->error($model,'superuser'); ?>
+		</div>
 	</div>
 
 	<div class="row"><div class="left-div-admin-form">
@@ -86,36 +87,38 @@
 		<?php $disabled = array(); if (!$admin && $manager && $fields['status']) $disabled = array('disabled'=>true); ?>
 		<?php echo $form->dropDownList($model,'status',$attributes, $disabled); ?>
 		<?php echo $form->error($model,'status'); ?>
+		</div>
 	</div>
 	
 <?php 
 		}
-		$mailing_list = 0;
-		$_arr = array('','icq','sms','email');
 		foreach($fields as $field) {
 			$name = strtolower($field->varname);
-			if ($name == 'mailing_list') {
-				if(isset($model->profile)) $mailing_list = $model->profile->getAttribute($name);
-				$mailing_list = $_arr[$mailing_list];
-			}
 			
 ?>
 	<div class="row"><div class="left-div-admin-form">
-		<?php if($profile) $form->labelEx($profile, $field->title); ?>
+		<?php echo $form->labelEx($profile, $field->varname); ?>
 		</div><div class="right-div-admin-form">
 <?php 
 			if ($widgetEdit = $field->widgetEdit($profile)) {
 				echo $widgetEdit;
 			} elseif (($field->range) || ($field->field_type=="LIST")) {
-				if ($field->varname == 'specials' ) {
+				
+				$data = Catalog::model()->performCatsTree($field->varname);
+				$varname = $field->varname;
+				$selected = explode(',',$profile->$varname);
+				$options = array();
+				$htmlOptions = array('size' => '10', 'multiple' => 'true','style'=>'width:314px;','size'=>'10', 'empty'=>UserModule::t('Use Ctrl for multiply'),'options'=>$options);
+				//echo $form->listBox($profile, $varname, $data, $htmlOptions);
+				echo CHtml::listBox('Profile['.$varname.']', $selected, $data, $htmlOptions);
+				/*if ($field->varname == 'specials' ) {
 					echo $specials;
 				} else {	
 					$attributes = Profile::range($field->range);
 					$arr = array();
-					if ($field->varname == 'mailing_list' ) $arr['class'] = 'select-mailing-list';
 					if (!$admin && $manager && $field[paymentProps]) $arr['disabled'] = 'disabled';
 					echo $form->dropDownList($profile,$field->varname,Profile::range($field->range),$arr);
-				};	
+				};	*/
 			} elseif ($field->field_type=="TEXT") {
 				$attributes = array('rows'=>6, 'cols'=>38, 'placeholder'=>$profile->getAttributeLabel( $field->varname ).($profile->isAttributeRequired($field->varname)?' *':''));
 				if (!$admin && $manager && $field[paymentProps]) $attributes['disabled'] = true;
@@ -144,11 +147,3 @@
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
-<input type="hidden" id="mailing_list" value="<?= $mailing_list ?>">
-
-<script>
-	$(document).ready(function()
-	{
-		$('#Profile_mailing_list').val($('#mailing_list').val());
-	});
-</script>

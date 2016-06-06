@@ -8,7 +8,7 @@ $this->menu=array(
     array('label'=>UserModule::t('Create User'), 'url'=>array('create')),
     //array('label'=>UserModule::t('Manage Users'), 'url'=>array('admin')),
     array('label'=>UserModule::t('Manage Profile Field'), 'url'=>array('profileField/admin')),
-    array('label'=>UserModule::t('List User'), 'url'=>array('/user')),
+    //array('label'=>UserModule::t('List User'), 'url'=>array('/user')),
     array('label'=>UserModule::t('User rights'), 'url'=>array('/rights')),
 );
 
@@ -44,7 +44,7 @@ $('.search-form form').submit(function(){
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'user-grid',
-	'dataProvider'=>$model->search(),
+	'dataProvider'=>$model->with('roles')->search(),
 	'filter'=>$model,
 	'columns'=>array(
 		array(
@@ -55,12 +55,13 @@ $('.search-form form').submit(function(){
 		array(
 			'name' => 'username',
 			'type'=>'raw',
-			'value' => 'CHtml::link(UHtml::markSearch($data,"username"),array("admin/view","id"=>$data->id))',
+			'value' => 'CHtml::link(UHtml::markSearch($data,"username"),array("admin/update","id"=>$data->id))',
 		),
 		array(
 			'name'=>'email',
 			'type'=>'raw',
-			'value'=>'CHtml::link(UHtml::markSearch($data,"email"), "mailto:".$data->email)',
+			'value' => 'CHtml::link(UHtml::markSearch($data,"email"),array("admin/update","id"=>$data->id))',
+			//'value'=>'CHtml::link(UHtml::markSearch($data,"email"), "mailto:".$data->email)',
 		),
 		'create_at',
 		'lastvisit_at',
@@ -75,7 +76,13 @@ $('.search-form form').submit(function(){
 			'filter' => User::itemAlias("UserStatus"),
 		),
 		array(
+			'name'=>'roles',
+			'value'=>'$data->printRoles()',
+			'filter' => User::itemAlias('roles'),
+		),
+		array(
 			'class'=>'CButtonColumn',
+			'template'=>'{delete}',
 		),
 	),
 )); ?>
